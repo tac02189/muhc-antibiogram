@@ -20,7 +20,14 @@ export default function Header({
   pdfHref,
 }) {
   return (
-    <header className="sticky top-0 z-40 bg-mizzou-black text-stone-100 shadow-md">
+    <header
+      className="sticky top-0 z-40 bg-mizzou-black text-stone-100 shadow-md"
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
+    >
       {/* Title bar */}
       <div className="px-3 sm:px-5 pt-3 pb-2 flex items-center gap-2 sm:gap-4">
         <div className="flex-1 min-w-0">

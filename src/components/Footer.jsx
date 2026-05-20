@@ -2,7 +2,14 @@ import { AlertTriangle, Phone } from "lucide-react";
 
 export default function Footer({ microPhone, infectionPhone, version, lastUpdated, pdfHref }) {
   return (
-    <footer className="mt-12 border-t border-stone-200 bg-stone-100 text-stone-700">
+    <footer
+      className="mt-12 border-t border-stone-200 bg-stone-100 text-stone-700"
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
+    >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4 text-xs">
         <div className="flex items-start gap-2 text-stone-800">
           <AlertTriangle className="w-4 h-4 mt-0.5 text-mizzou-gold-deep shrink-0" />

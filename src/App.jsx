@@ -48,7 +48,13 @@ export default function App() {
         pdfHref={PDF_HREF}
       />
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-3 sm:px-5 py-4 sm:py-6">
+      <main
+        className="flex-1 max-w-5xl mx-auto w-full px-3 sm:px-5 py-4 sm:py-6"
+        style={{
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+        }}
+      >
         {tab === "organism" && (
           <OrganismView
             organisms={antibiogramData.organisms}

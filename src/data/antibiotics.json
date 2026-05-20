@@ -1,0 +1,237 @@
+{
+  "penicillin": {
+    "name": "Penicillin",
+    "class": "penicillin",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "oxacillin": {
+    "name": "Oxacillin",
+    "class": "penicillin",
+    "routes": [
+      "IV"
+    ],
+    "notes": "Susceptibility implies cefazolin & cephalexin susceptibility."
+  },
+  "ampicillin": {
+    "name": "Ampicillin",
+    "class": "penicillin",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "ampicillin-sulbactam": {
+    "name": "Ampicillin/sulbactam",
+    "class": "beta-lactam/inhibitor",
+    "routes": [
+      "IV"
+    ]
+  },
+  "piperacillin-tazobactam": {
+    "name": "Piperacillin/tazobactam",
+    "class": "beta-lactam/inhibitor",
+    "routes": [
+      "IV"
+    ],
+    "notes": "Avoid for HECK-Yes organisms (inducible AmpC)."
+  },
+  "cefazolin": {
+    "name": "Cefazolin",
+    "class": "1st-gen cephalosporin",
+    "routes": [
+      "IV"
+    ],
+    "notes": "Urinary isolates only on the panel."
+  },
+  "cefoxitin": {
+    "name": "Cefoxitin",
+    "class": "2nd-gen cephalosporin (cephamycin)",
+    "routes": [
+      "IV"
+    ]
+  },
+  "ceftriaxone": {
+    "name": "Ceftriaxone (= cefotaxime)",
+    "class": "3rd-gen cephalosporin",
+    "routes": [
+      "IV"
+    ]
+  },
+  "ceftazidime": {
+    "name": "Ceftazidime",
+    "class": "3rd-gen cephalosporin (anti-pseudo)",
+    "routes": [
+      "IV"
+    ]
+  },
+  "cefepime": {
+    "name": "Cefepime",
+    "class": "4th-gen cephalosporin",
+    "routes": [
+      "IV"
+    ]
+  },
+  "meropenem": {
+    "name": "Meropenem",
+    "class": "carbapenem",
+    "routes": [
+      "IV"
+    ]
+  },
+  "amikacin": {
+    "name": "Amikacin",
+    "class": "aminoglycoside",
+    "routes": [
+      "IV"
+    ],
+    "notes": "For Pseudomonas, urinary tract infections only."
+  },
+  "gentamicin": {
+    "name": "Gentamicin",
+    "class": "aminoglycoside",
+    "routes": [
+      "IV"
+    ],
+    "notes": "No longer recommended for Pseudomonas per CLSI."
+  },
+  "gentamicin-synergy": {
+    "name": "Gentamicin synergy",
+    "class": "aminoglycoside (synergy)",
+    "routes": [
+      "IV"
+    ],
+    "notes": "For Enterococcus, combined with cell-wall agent."
+  },
+  "tobramycin": {
+    "name": "Tobramycin",
+    "class": "aminoglycoside",
+    "routes": [
+      "IV"
+    ]
+  },
+  "clindamycin": {
+    "name": "Clindamycin",
+    "class": "lincosamide",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "erythromycin": {
+    "name": "Erythromycin",
+    "class": "macrolide",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "vancomycin": {
+    "name": "Vancomycin",
+    "class": "glycopeptide",
+    "routes": [
+      "IV",
+      "PO"
+    ],
+    "notes": "PO only for C. difficile."
+  },
+  "rifampin": {
+    "name": "Rifampin",
+    "class": "rifamycin",
+    "routes": [
+      "IV",
+      "PO"
+    ],
+    "notes": "Adjunct only — never monotherapy."
+  },
+  "linezolid": {
+    "name": "Linezolid",
+    "class": "oxazolidinone",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "tetracycline": {
+    "name": "Tetracycline",
+    "class": "tetracycline",
+    "routes": [
+      "PO"
+    ]
+  },
+  "minocycline": {
+    "name": "Minocycline",
+    "class": "tetracycline",
+    "routes": [
+      "IV",
+      "PO"
+    ],
+    "notes": "Inadequate blood levels — don't use for bacteremia."
+  },
+  "tmp-smx": {
+    "name": "TMP-SMX (Bactrim)",
+    "class": "sulfonamide",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "levofloxacin": {
+    "name": "Levofloxacin",
+    "class": "fluoroquinolone",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "ciprofloxacin": {
+    "name": "Ciprofloxacin",
+    "class": "fluoroquinolone",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "nitrofurantoin": {
+    "name": "Nitrofurantoin",
+    "class": "nitrofuran",
+    "routes": [
+      "PO"
+    ],
+    "notes": "Urinary tract only — no systemic activity."
+  },
+  "fluconazole": {
+    "name": "Fluconazole",
+    "class": "azole antifungal",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "voriconazole": {
+    "name": "Voriconazole",
+    "class": "azole antifungal",
+    "routes": [
+      "IV",
+      "PO"
+    ]
+  },
+  "caspofungin": {
+    "name": "Caspofungin",
+    "class": "echinocandin",
+    "routes": [
+      "IV"
+    ],
+    "notes": "NOT for CNS or urinary infections."
+  },
+  "micafungin": {
+    "name": "Micafungin",
+    "class": "echinocandin",
+    "routes": [
+      "IV"
+    ],
+    "notes": "NOT for CNS or urinary infections."
+  }
+}

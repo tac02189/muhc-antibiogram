@@ -1,0 +1,1752 @@
+{
+  "version": "2026",
+  "source": "MUHC University Hospital Antibiogram 2026",
+  "lastUpdated": "2026-03-07",
+  "microLabPhone": "573-882-1287",
+  "infectionPreventionPhone": "573-882-6880",
+  "legend": {
+    "susceptibilityBands": [
+      {
+        "min": 80,
+        "max": 100,
+        "label": "Good susceptibility"
+      },
+      {
+        "min": 41,
+        "max": 79,
+        "label": "Moderate susceptibility"
+      },
+      {
+        "min": 0,
+        "max": 40,
+        "label": "Poor susceptibility"
+      }
+    ],
+    "isolateMinimum": 30,
+    "isolateNote": "Data for fewer than 30 isolates is not statistically significant per CLSI. Interpret cautiously."
+  },
+  "audiences": {
+    "all": {
+      "name": "All Locations & Ages",
+      "description": "MUHC University Hospital, all inpatient locations (excluding clinics). January – December 2025.",
+      "short": "All"
+    },
+    "ed": {
+      "name": "Emergency Department",
+      "description": "MUHC ED (Main), all ages excluding clinics. January 2024 – December 2025.",
+      "short": "ED"
+    },
+    "icu": {
+      "name": "Intensive Care Units",
+      "description": "CICU, MICU3, MICU5, NSICU, SICU. January 2024 – December 2025.",
+      "short": "ICU"
+    },
+    "peds": {
+      "name": "Children's Hospital",
+      "description": "NICU, Well Nursery, Peds, PICU, Youth Psych (excluding clinics). January 2024 – December 2025.",
+      "short": "Peds"
+    }
+  },
+  "organisms": [
+    {
+      "id": "enterococcus-faecalis",
+      "name": "Enterococcus faecalis",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 277,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 100,
+            "erythromycin": null,
+            "vancomycin": 99,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": 75,
+            "nitrofurantoin": 99
+          },
+          "nitrofurantoinTested": 161
+        },
+        "ed": {
+          "isolateCount": 245,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 100,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "erythromycin": null,
+            "vancomycin": 99,
+            "tetracycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 99
+          },
+          "nitrofurantoinTested": 176
+        },
+        "icu": {
+          "isolateCount": 79,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 100,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "amikacin": null,
+            "vancomycin": 97,
+            "tetracycline": null,
+            "minocycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 40
+        },
+        "peds": {
+          "isolateCount": 28,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 100,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "enterococcus-faecium",
+      "name": "Enterococcus faecium",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 61,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 19,
+            "erythromycin": null,
+            "vancomycin": 55,
+            "rifampin": null,
+            "linezolid": 100,
+            "tetracycline": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": 28
+          },
+          "nitrofurantoinTested": 18
+        },
+        "icu": {
+          "isolateCount": 36,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 22,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "amikacin": null,
+            "vancomycin": 44,
+            "tetracycline": null,
+            "minocycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 11
+          },
+          "nitrofurantoinTested": 9
+        }
+      }
+    },
+    {
+      "id": "enterococcus-spp-all-species",
+      "name": "Enterococcus spp. (all species)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 389,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 77,
+            "erythromycin": null,
+            "vancomycin": 79,
+            "rifampin": null,
+            "linezolid": 96,
+            "tetracycline": 9,
+            "levofloxacin": null,
+            "gentamicin-synergy": 76,
+            "nitrofurantoin": 84
+          },
+          "nitrofurantoinTested": 234
+        },
+        "ed": {
+          "isolateCount": 298,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 87,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "erythromycin": 3,
+            "vancomycin": 89,
+            "tetracycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 89
+          },
+          "nitrofurantoinTested": 213
+        },
+        "peds": {
+          "isolateCount": 32,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 97,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "erythromycin": null,
+            "vancomycin": 94,
+            "rifampin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "enterococcus-spp-all",
+      "name": "Enterococcus spp. (all)",
+      "gramStain": "positive",
+      "data": {
+        "icu": {
+          "isolateCount": 127,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": null,
+            "ampicillin": 67,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "meropenem": null,
+            "amikacin": null,
+            "vancomycin": 72,
+            "tetracycline": null,
+            "minocycline": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 80
+          },
+          "nitrofurantoinTested": 56
+        }
+      }
+    },
+    {
+      "id": "staphylococcus-aureus-mrsa",
+      "name": "Staphylococcus aureus (MRSA)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 335,
+          "susceptibilities": {
+            "clindamycin": 70,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": 99,
+            "linezolid": null,
+            "tetracycline": 81,
+            "tmp-smx": 73,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 22
+        },
+        "ed": {
+          "isolateCount": 294,
+          "susceptibilities": {
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 69,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "tetracycline": 84,
+            "tmp-smx": 65,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 39
+        },
+        "icu": {
+          "isolateCount": 174,
+          "susceptibilities": {
+            "amikacin": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 60,
+            "vancomycin": 100,
+            "tetracycline": 87,
+            "minocycline": null,
+            "tmp-smx": 86,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 3
+        },
+        "peds": {
+          "isolateCount": 45,
+          "susceptibilities": {
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 91,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": 100,
+            "tetracycline": 93,
+            "minocycline": null,
+            "tmp-smx": 76,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "staphylococcus-aureus-mssa",
+      "name": "Staphylococcus aureus (MSSA)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 491,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 100,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": 95,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": 94,
+            "tmp-smx": 98,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 25
+        },
+        "ed": {
+          "isolateCount": 316,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 100,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 94,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "tetracycline": 95,
+            "tmp-smx": 96,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 36
+        },
+        "icu": {
+          "isolateCount": 248,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 100,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "amikacin": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 97,
+            "vancomycin": 100,
+            "tetracycline": 92,
+            "minocycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 6
+        },
+        "peds": {
+          "isolateCount": 60,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 100,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 96,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": null,
+            "tetracycline": 95,
+            "minocycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "staphylococcus-coagulase-negative-cons",
+      "name": "Staphylococcus coagulase negative (CONS)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 568,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 38,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": 64,
+            "erythromycin": 39,
+            "vancomycin": 100,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": 78,
+            "tmp-smx": null,
+            "levofloxacin": 71,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 54
+        },
+        "ed": {
+          "isolateCount": 466,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 42,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 63,
+            "erythromycin": 38,
+            "vancomycin": 100,
+            "tetracycline": 76,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": 73,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 54
+        },
+        "icu": {
+          "isolateCount": 235,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 36,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "amikacin": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 58,
+            "vancomycin": 100,
+            "tetracycline": 78,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": 69,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 12
+        },
+        "peds": {
+          "isolateCount": 65,
+          "susceptibilities": {
+            "penicillin": null,
+            "oxacillin": 21,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 33,
+            "erythromycin": 13,
+            "vancomycin": 100,
+            "rifampin": null,
+            "tetracycline": 94,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": 44,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-agalactiae-gbs",
+      "name": "Streptococcus agalactiae (GBS)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 58,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": 51,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 47,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 45,
+            "erythromycin": null,
+            "vancomycin": 100,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-anginosus",
+      "name": "Streptococcus anginosus",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 48,
+          "susceptibilities": {
+            "penicillin": 98,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": 65,
+            "erythromycin": 47,
+            "vancomycin": 100,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 49,
+          "susceptibilities": {
+            "penicillin": 93,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 70,
+            "erythromycin": 61,
+            "vancomycin": 100,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-pneumoniae-blood-cerebrospinal-fluid",
+      "name": "Streptococcus pneumoniae (blood/cerebrospinal fluid)*",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 13,
+          "susceptibilities": {
+            "penicillin": 77,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ceftriaxone": 75,
+            "clindamycin": null,
+            "erythromycin": null,
+            "vancomycin": null,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-pneumoniae-non-sterile",
+      "name": "Streptococcus pneumoniae (non-sterile)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 58,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": null,
+            "erythromycin": 51,
+            "vancomycin": null,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "tmp-smx": 81,
+            "levofloxacin": 100,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-pneumoniae",
+      "name": "Streptococcus pneumoniae^",
+      "gramStain": "positive",
+      "data": {
+        "icu": {
+          "isolateCount": 77,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "amikacin": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": null,
+            "vancomycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 75,
+            "ciprofloxacin": null,
+            "levofloxacin": 100,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "streptococcus-pyogenes-gas",
+      "name": "Streptococcus pyogenes (GAS)",
+      "gramStain": "positive",
+      "data": {
+        "all": {
+          "isolateCount": 36,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ceftriaxone": null,
+            "clindamycin": 88,
+            "erythromycin": 80,
+            "vancomycin": 100,
+            "rifampin": null,
+            "linezolid": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "levofloxacin": null,
+            "gentamicin-synergy": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 54,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 82,
+            "erythromycin": 77,
+            "vancomycin": 100,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "peds": {
+          "isolateCount": 11,
+          "susceptibilities": {
+            "penicillin": 100,
+            "oxacillin": null,
+            "ampicillin": null,
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "cefepime": null,
+            "meropenem": null,
+            "gentamicin": null,
+            "tobramycin": null,
+            "clindamycin": 100,
+            "erythromycin": 100,
+            "vancomycin": 100,
+            "rifampin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": null,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "citrobacter-freundii",
+      "name": "Citrobacter freundii*",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 47,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 98,
+            "meropenem": 98,
+            "amikacin": null,
+            "gentamicin": 91,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 77,
+            "levofloxacin": null,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 35
+        },
+        "ed": {
+          "isolateCount": 42,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 90,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 76,
+            "levofloxacin": null,
+            "nitrofurantoin": 84
+          },
+          "nitrofurantoinTested": 38
+        }
+      }
+    },
+    {
+      "id": "citrobacter-koseri",
+      "name": "Citrobacter koseri",
+      "gramStain": "negative",
+      "data": {
+        "ed": {
+          "isolateCount": 30,
+          "susceptibilities": {
+            "ampicillin-sulbactam": null,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 97,
+            "meropenem": null,
+            "gentamicin": 97,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 97,
+            "levofloxacin": null,
+            "nitrofurantoin": 89
+          },
+          "nitrofurantoinTested": 27
+        }
+      }
+    },
+    {
+      "id": "enterobacter-cloacae",
+      "name": "Enterobacter cloacae*",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 135,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 93,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 97,
+            "tobramycin": 87,
+            "minocycline": null,
+            "tmp-smx": 92,
+            "ciprofloxacin": 94,
+            "levofloxacin": 91,
+            "nitrofurantoin": 39
+          },
+          "nitrofurantoinTested": 57
+        },
+        "ed": {
+          "isolateCount": 111,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 92,
+            "meropenem": 100,
+            "gentamicin": 96,
+            "tobramycin": 91,
+            "tetracycline": null,
+            "tmp-smx": 87,
+            "ciprofloxacin": 92,
+            "levofloxacin": 94,
+            "nitrofurantoin": 32
+          },
+          "nitrofurantoinTested": 80
+        },
+        "icu": {
+          "isolateCount": 63,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": 0,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 92,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 90,
+            "ciprofloxacin": 98,
+            "levofloxacin": 93,
+            "nitrofurantoin": 43
+          },
+          "nitrofurantoinTested": 7
+        },
+        "peds": {
+          "isolateCount": 15,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": null,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": 100,
+            "levofloxacin": 100,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "escherichia-coli",
+      "name": "Escherichia coli",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 1265,
+          "susceptibilities": {
+            "ampicillin": 52,
+            "ampicillin-sulbactam": 65,
+            "piperacillin-tazobactam": 96,
+            "cefazolin": 95,
+            "cefoxitin": 83,
+            "ceftriaxone": 92,
+            "ceftazidime": 94,
+            "cefepime": 96,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 90,
+            "tobramycin": 91,
+            "minocycline": null,
+            "tmp-smx": 75,
+            "ciprofloxacin": 74,
+            "levofloxacin": 70,
+            "nitrofurantoin": 97
+          },
+          "nitrofurantoinTested": 1050
+        },
+        "ed": {
+          "isolateCount": 1720,
+          "susceptibilities": {
+            "ampicillin": 51,
+            "ampicillin-sulbactam": 63,
+            "piperacillin-tazobactam": 96,
+            "cefazolin": 96,
+            "cefoxitin": 79,
+            "ceftriaxone": 91,
+            "ceftazidime": 96,
+            "cefepime": 98,
+            "meropenem": 100,
+            "gentamicin": 91,
+            "tobramycin": 92,
+            "tetracycline": null,
+            "tmp-smx": 74,
+            "ciprofloxacin": 75,
+            "levofloxacin": 67,
+            "nitrofurantoin": 96
+          },
+          "nitrofurantoinTested": 1556
+        },
+        "icu": {
+          "isolateCount": 253,
+          "susceptibilities": {
+            "ampicillin": 50,
+            "ampicillin-sulbactam": 63,
+            "piperacillin-tazobactam": 92,
+            "cefazolin": 94,
+            "cefoxitin": 83,
+            "ceftriaxone": 88,
+            "ceftazidime": 93,
+            "cefepime": 96,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 90,
+            "tobramycin": 90,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 78,
+            "ciprofloxacin": 70,
+            "levofloxacin": 65,
+            "nitrofurantoin": 98
+          },
+          "nitrofurantoinTested": 145
+        },
+        "peds": {
+          "isolateCount": 58,
+          "susceptibilities": {
+            "ampicillin": 45,
+            "ampicillin-sulbactam": 57,
+            "piperacillin-tazobactam": 96,
+            "cefazolin": 95,
+            "cefoxitin": 100,
+            "ceftriaxone": 96,
+            "ceftazidime": 94,
+            "cefepime": 96,
+            "meropenem": 100,
+            "gentamicin": 90,
+            "tobramycin": 97,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 79,
+            "ciprofloxacin": 84,
+            "levofloxacin": 74,
+            "nitrofurantoin": 100
+          },
+          "nitrofurantoinTested": 33
+        }
+      }
+    },
+    {
+      "id": "klebsiella-aerogenes",
+      "name": "Klebsiella aerogenes*",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 47,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 98,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": 91,
+            "levofloxacin": null,
+            "nitrofurantoin": 10
+          },
+          "nitrofurantoinTested": 21
+        },
+        "ed": {
+          "isolateCount": 42,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": 98,
+            "levofloxacin": null,
+            "nitrofurantoin": 12
+          },
+          "nitrofurantoinTested": 34
+        },
+        "icu": {
+          "isolateCount": 39,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": null,
+            "ceftazidime": null,
+            "cefepime": 95,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 100,
+            "ciprofloxacin": 95,
+            "levofloxacin": 97,
+            "nitrofurantoin": 9
+          },
+          "nitrofurantoinTested": 11
+        }
+      }
+    },
+    {
+      "id": "klebsiella-oxytoca",
+      "name": "Klebsiella oxytoca",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 57,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 64,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": 91,
+            "ceftriaxone": 94,
+            "ceftazidime": null,
+            "cefepime": 98,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 93,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": 89,
+            "ciprofloxacin": 93,
+            "levofloxacin": 88,
+            "nitrofurantoin": 86
+          },
+          "nitrofurantoinTested": 21
+        },
+        "ed": {
+          "isolateCount": 48,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 79,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": 96,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 94,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": 96,
+            "ciprofloxacin": 94,
+            "levofloxacin": null,
+            "nitrofurantoin": 85
+          },
+          "nitrofurantoinTested": 26
+        },
+        "peds": {
+          "isolateCount": 12,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 75,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": 100,
+            "ceftriaxone": 92,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 92,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 92,
+            "ciprofloxacin": 92,
+            "levofloxacin": 91,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "klebsiella-pneumoniae",
+      "name": "Klebsiella pneumoniae",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 322,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 73,
+            "piperacillin-tazobactam": 88,
+            "cefazolin": 100,
+            "cefoxitin": 87,
+            "ceftriaxone": 81,
+            "ceftazidime": 84,
+            "cefepime": 90,
+            "meropenem": 98,
+            "amikacin": null,
+            "gentamicin": 93,
+            "tobramycin": 94,
+            "minocycline": null,
+            "tmp-smx": 79,
+            "ciprofloxacin": 77,
+            "levofloxacin": 76,
+            "nitrofurantoin": 28
+          },
+          "nitrofurantoinTested": 228
+        },
+        "ed": {
+          "isolateCount": 344,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 77,
+            "piperacillin-tazobactam": 91,
+            "cefazolin": 98,
+            "cefoxitin": 85,
+            "ceftriaxone": 84,
+            "ceftazidime": 87,
+            "cefepime": 94,
+            "meropenem": 100,
+            "gentamicin": 94,
+            "tobramycin": 96,
+            "tetracycline": null,
+            "tmp-smx": 81,
+            "ciprofloxacin": 80,
+            "levofloxacin": 70,
+            "nitrofurantoin": 26
+          },
+          "nitrofurantoinTested": 295
+        },
+        "icu": {
+          "isolateCount": 121,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 71,
+            "piperacillin-tazobactam": 87,
+            "cefazolin": 97,
+            "cefoxitin": 97,
+            "ceftriaxone": 84,
+            "ceftazidime": 95,
+            "cefepime": 93,
+            "meropenem": 97,
+            "amikacin": null,
+            "gentamicin": 95,
+            "tobramycin": 95,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 79,
+            "ciprofloxacin": 82,
+            "levofloxacin": 78,
+            "nitrofurantoin": 27
+          },
+          "nitrofurantoinTested": 51
+        },
+        "peds": {
+          "isolateCount": 21,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 100,
+            "piperacillin-tazobactam": 100,
+            "cefazolin": null,
+            "cefoxitin": 100,
+            "ceftriaxone": 100,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 95,
+            "ciprofloxacin": 100,
+            "levofloxacin": 100,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "proteus-mirabilis",
+      "name": "Proteus mirabilis",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 176,
+          "susceptibilities": {
+            "ampicillin": 72,
+            "ampicillin-sulbactam": 82,
+            "piperacillin-tazobactam": 99,
+            "cefazolin": 94,
+            "cefoxitin": 93,
+            "ceftriaxone": 89,
+            "ceftazidime": 98,
+            "cefepime": 93,
+            "meropenem": 99,
+            "amikacin": null,
+            "gentamicin": 87,
+            "tobramycin": 91,
+            "minocycline": null,
+            "tmp-smx": 62,
+            "ciprofloxacin": 57,
+            "levofloxacin": 71
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 211,
+          "susceptibilities": {
+            "ampicillin": 72,
+            "ampicillin-sulbactam": 84,
+            "piperacillin-tazobactam": 99,
+            "cefazolin": 93,
+            "cefoxitin": 87,
+            "ceftriaxone": 90,
+            "ceftazidime": 99,
+            "cefepime": 95,
+            "meropenem": 100,
+            "gentamicin": 90,
+            "tobramycin": 89,
+            "tmp-smx": 72,
+            "ciprofloxacin": 59,
+            "levofloxacin": 57
+          },
+          "nitrofurantoinTested": null
+        },
+        "icu": {
+          "isolateCount": 52,
+          "susceptibilities": {
+            "ampicillin": 76,
+            "ampicillin-sulbactam": 81,
+            "piperacillin-tazobactam": 100,
+            "cefazolin": null,
+            "cefoxitin": 94,
+            "ceftriaxone": 90,
+            "ceftazidime": null,
+            "cefepime": 96,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 83,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": 69,
+            "ciprofloxacin": 69,
+            "levofloxacin": 74
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "pseudomonas-aeruginosa",
+      "name": "Pseudomonas aeruginosa",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 304,
+          "susceptibilities": {
+            "piperacillin-tazobactam": 94,
+            "ceftazidime": 90,
+            "cefepime": 94,
+            "meropenem": 90,
+            "amikacin": 100,
+            "gentamicin": null,
+            "tobramycin": null,
+            "ciprofloxacin": 85,
+            "levofloxacin": 81,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 204,
+          "susceptibilities": {
+            "piperacillin-tazobactam": 95,
+            "ceftazidime": 92,
+            "cefepime": 94,
+            "meropenem": 91,
+            "gentamicin": null,
+            "tobramycin": null,
+            "ciprofloxacin": 86,
+            "levofloxacin": 79,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "icu": {
+          "isolateCount": 184,
+          "susceptibilities": {
+            "piperacillin-tazobactam": 92,
+            "ceftazidime": 90,
+            "cefepime": 93,
+            "meropenem": 88,
+            "amikacin": 100,
+            "gentamicin": null,
+            "tobramycin": null,
+            "minocycline": null,
+            "ciprofloxacin": 84,
+            "levofloxacin": 81,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "peds": {
+          "isolateCount": 26,
+          "susceptibilities": {
+            "piperacillin-tazobactam": 96,
+            "ceftazidime": 92,
+            "cefepime": 88,
+            "meropenem": 92,
+            "gentamicin": null,
+            "tobramycin": null,
+            "ciprofloxacin": 100,
+            "levofloxacin": 88,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "raoultella-ornithinolytica",
+      "name": "Raoultella ornithinolytica",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 49,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 68,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": 88,
+            "ceftazidime": null,
+            "cefepime": 98,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 98,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": 90,
+            "ciprofloxacin": 96,
+            "levofloxacin": null,
+            "nitrofurantoin": 85
+          },
+          "nitrofurantoinTested": 26
+        }
+      }
+    },
+    {
+      "id": "raoultella-spp",
+      "name": "Raoultella spp.",
+      "gramStain": "negative",
+      "data": {
+        "ed": {
+          "isolateCount": 43,
+          "susceptibilities": {
+            "ampicillin-sulbactam": 78,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": 92,
+            "ceftazidime": 97,
+            "cefepime": 97,
+            "meropenem": 100,
+            "gentamicin": 98,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": 94,
+            "ciprofloxacin": 93,
+            "levofloxacin": null,
+            "nitrofurantoin": 84
+          },
+          "nitrofurantoinTested": 38
+        },
+        "peds": {
+          "isolateCount": 13,
+          "susceptibilities": {
+            "ampicillin": null,
+            "ampicillin-sulbactam": 62,
+            "piperacillin-tazobactam": null,
+            "cefazolin": null,
+            "cefoxitin": null,
+            "ceftriaxone": 100,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": 82,
+            "ciprofloxacin": 100,
+            "levofloxacin": null,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "serratia-marcescens",
+      "name": "Serratia marcescens",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 62,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": 92,
+            "ceftazidime": null,
+            "cefepime": 97,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 98,
+            "tobramycin": null,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 95,
+            "levofloxacin": 94
+          },
+          "nitrofurantoinTested": null
+        },
+        "ed": {
+          "isolateCount": 47,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": 98,
+            "ceftazidime": null,
+            "cefepime": 100,
+            "meropenem": 100,
+            "gentamicin": 98,
+            "tobramycin": null,
+            "tetracycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 94,
+            "levofloxacin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "icu": {
+          "isolateCount": 53,
+          "susceptibilities": {
+            "piperacillin-tazobactam": null,
+            "cefoxitin": null,
+            "ceftriaxone": 96,
+            "ceftazidime": null,
+            "cefepime": 98,
+            "meropenem": 100,
+            "amikacin": null,
+            "gentamicin": 100,
+            "tobramycin": null,
+            "tetracycline": null,
+            "minocycline": null,
+            "tmp-smx": null,
+            "ciprofloxacin": 98,
+            "levofloxacin": 98
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "stenotrophomonas-maltophilia",
+      "name": "Stenotrophomonas maltophilia",
+      "gramStain": "negative",
+      "data": {
+        "all": {
+          "isolateCount": 64,
+          "susceptibilities": {
+            "ceftazidime": null,
+            "cefepime": null,
+            "minocycline": 91,
+            "tmp-smx": 91,
+            "ciprofloxacin": null,
+            "levofloxacin": 91,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "icu": {
+          "isolateCount": 52,
+          "susceptibilities": {
+            "ceftazidime": null,
+            "cefepime": null,
+            "minocycline": 96,
+            "tmp-smx": 87,
+            "ciprofloxacin": null,
+            "levofloxacin": 90,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        },
+        "peds": {
+          "isolateCount": 11,
+          "susceptibilities": {
+            "ceftazidime": null,
+            "cefepime": null,
+            "minocycline": 91,
+            "tmp-smx": 100,
+            "ciprofloxacin": null,
+            "levofloxacin": 82,
+            "nitrofurantoin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "candida-albicans",
+      "name": "Candida albicans",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 42,
+          "susceptibilities": {
+            "fluconazole": 100,
+            "voriconazole": 100,
+            "caspofungin": 100,
+            "micafungin": 100
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "candida-dubliniensis",
+      "name": "Candida dubliniensis",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 6,
+          "susceptibilities": {
+            "fluconazole": 100,
+            "voriconazole": 100,
+            "caspofungin": null,
+            "micafungin": null
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "candida-parapsilosis",
+      "name": "Candida parapsilosis",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 15,
+          "susceptibilities": {
+            "fluconazole": 100,
+            "voriconazole": 100,
+            "caspofungin": 100,
+            "micafungin": 100
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "candida-tropicalis",
+      "name": "Candida tropicalis",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 8,
+          "susceptibilities": {
+            "fluconazole": 100,
+            "voriconazole": 100,
+            "caspofungin": 100,
+            "micafungin": 100
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "nakaseomyces-glabratus",
+      "name": "Nakaseomyces glabratus",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 7,
+          "susceptibilities": {
+            "fluconazole": null,
+            "voriconazole": null,
+            "caspofungin": null,
+            "micafungin": 86
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    },
+    {
+      "id": "pichia-kudriavzevii",
+      "name": "Pichia kudriavzevii",
+      "gramStain": "fungus",
+      "data": {
+        "all": {
+          "isolateCount": 1,
+          "susceptibilities": {
+            "voriconazole": 100,
+            "caspofungin": 100,
+            "micafungin": 100
+          },
+          "nitrofurantoinTested": null
+        }
+      }
+    }
+  ]
+}

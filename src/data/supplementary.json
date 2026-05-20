@@ -1,0 +1,458 @@
+{
+  "resistance": {
+    "esbl": {
+      "title": "ESBL Rates, n/N (%)",
+      "organisms": [
+        {
+          "name": "E. coli",
+          "all": "104/1265 (8)",
+          "ed": "104/1766 (6)",
+          "icu": "23/254 (9)",
+          "peds": "3/60 (5)"
+        },
+        {
+          "name": "K. oxytoca",
+          "all": "3/52 (6)",
+          "ed": "2/46 (4)",
+          "icu": null,
+          "peds": "1/12 (8)"
+        },
+        {
+          "name": "K. pneumoniae",
+          "all": "45/322 (14)",
+          "ed": "36/352 (10)",
+          "icu": "12/122 (10)",
+          "peds": "0/21 (0)"
+        },
+        {
+          "name": "P. mirabilis",
+          "all": "10/176 (6)",
+          "ed": "10/211 (5)",
+          "icu": "3/53 (6)",
+          "peds": null
+        }
+      ],
+      "note": "ED, ICU, and Children's Hospital data span 2024–2025."
+    },
+    "cre": {
+      "title": "CRE Rates, n/N (%)",
+      "definition": "Per CDC: Enterobacterales resistant to any carbapenem.",
+      "organisms": [
+        {
+          "name": "E. coli",
+          "all": "4/1265 (0.3)",
+          "ed": "2/1766 (0.1)",
+          "icu": "1/254 (0.4)",
+          "peds": "0/60 (0)"
+        },
+        {
+          "name": "K. oxytoca",
+          "all": "0/57 (0)",
+          "ed": "0/48 (0)",
+          "icu": null,
+          "peds": "0/12 (0)"
+        },
+        {
+          "name": "K. pneumoniae",
+          "all": "5/322 (1.6)",
+          "ed": "2/352 (0.6)",
+          "icu": "3/122 (2.5)",
+          "peds": "0/21 (0)"
+        },
+        {
+          "name": "P. mirabilis",
+          "all": "0/176 (0)",
+          "ed": "0/211 (0)",
+          "icu": "0/53 (0)",
+          "peds": null
+        },
+        {
+          "name": "A. baumannii",
+          "all": "15/27 (56)",
+          "ed": null,
+          "icu": null,
+          "peds": null
+        }
+      ],
+      "note": "A. baumannii carbapenem resistance reported for 2024–2025 (All Locations)."
+    },
+    "pneumoBreakpoints": {
+      "title": "S. pneumoniae Breakpoints (μg/mL)",
+      "rows": [
+        {
+          "site": "Meningitis/CSF",
+          "penicillin": "IV: ≤ 0.06 (S); ≥ 0.12 (R)",
+          "ceftriaxone": "≤ 0.5 (S); 1 (I); ≥ 2 (R)"
+        },
+        {
+          "site": "Sterile, Non-CSF",
+          "penicillin": "IV: ≤ 2 (S); 4 (I); ≥ 8 (R)",
+          "ceftriaxone": "≤ 1 (S); 2 (I); ≥ 4 (R)"
+        },
+        {
+          "site": "Non-Sterile",
+          "penicillin": "PO: ≤ 0.06 (S); 0.12–1 (I); ≥ 2 (R)",
+          "ceftriaxone": "Same as sterile, non-meningitis/CSF"
+        }
+      ]
+    }
+  },
+  "durations": {
+    "title": "Shorter is Better — Antibiotic Durations",
+    "source": "https://www.bradspellberg.com/shorter-is-better",
+    "rows": [
+      {
+        "condition": "Community-acquired pneumonia",
+        "duration": "3–5 days"
+      },
+      {
+        "condition": "Hospital/ventilator pneumonia",
+        "duration": "5–7 days (depending on pathogen)"
+      },
+      {
+        "condition": "Cystitis",
+        "duration": "3–7 days (depending on agent)"
+      },
+      {
+        "condition": "Pyelonephritis / complicated UTI",
+        "duration": "5–7 days (depending on agent)"
+      },
+      {
+        "condition": "Catheter-associated UTI",
+        "duration": "3–7 days (depending on patient factors)"
+      },
+      {
+        "condition": "Skin & soft tissue infection",
+        "duration": "5–7 days"
+      },
+      {
+        "condition": "Non-purulent cellulitis",
+        "duration": "5 days"
+      },
+      {
+        "condition": "Intra-abdominal infection (with source control)",
+        "duration": "4 days"
+      },
+      {
+        "condition": "Clostridiodes difficile",
+        "duration": "10 days"
+      },
+      {
+        "condition": "COPD exacerbation (when indicated)",
+        "duration": "5 days (3 d if azithromycin)"
+      },
+      {
+        "condition": "Sinusitis (when indicated)",
+        "duration": "5 days"
+      },
+      {
+        "condition": "Bacteremia — uncomplicated MSSA/MRSA",
+        "duration": "14 days"
+      },
+      {
+        "condition": "Bacteremia — complicated MSSA/MRSA",
+        "duration": "4–6 weeks"
+      },
+      {
+        "condition": "Bacteremia — uncomplicated gram-negative",
+        "duration": "7 days"
+      },
+      {
+        "condition": "Bacteremia — other uncomplicated",
+        "duration": "7–14 days"
+      }
+    ]
+  },
+  "bloodCulture": {
+    "title": "Blood Culture Rapid Diagnostics & Empiric Treatment",
+    "gramPositive": [
+      {
+        "result": "Methicillin-Susceptible Staphylococcus epidermidis (CoNS)",
+        "empiric": "Vancomycin initially (clinical correlation — often contaminant)",
+        "notes": "CoNS in only one set: likely contamination. S. epidermidis is often oxacillin resistant — don't confuse with S. aureus."
+      },
+      {
+        "result": "Methicillin-Resistant Staphylococcus epidermidis (CoNS)",
+        "empiric": "Vancomycin initially (clinical correlation — often contaminant)",
+        "notes": "Stop antimicrobials if clinical concern for infection is low."
+      },
+      {
+        "result": "Oxacillin-Susceptible Staphylococcus lugdunensis",
+        "empiric": "Cefazolin or Nafcillin",
+        "notes": "CoNS but considered a pathogen."
+      },
+      {
+        "result": "Oxacillin-Resistant Staphylococcus lugdunensis",
+        "empiric": "Vancomycin",
+        "notes": ""
+      },
+      {
+        "result": "Oxacillin-Susceptible Staphylococcus aureus (MSSA)",
+        "empiric": "Cefazolin or Nafcillin",
+        "notes": "S. aureus is never a contaminant. ID consult. Minimum 14 d therapy."
+      },
+      {
+        "result": "Oxacillin-Resistant Staphylococcus aureus (MRSA)",
+        "empiric": "Vancomycin",
+        "notes": "S. aureus is never a contaminant. ID consult. Minimum 14 d therapy."
+      },
+      {
+        "result": "Streptococcus pneumoniae",
+        "empiric": "Ceftriaxone ± Vancomycin*",
+        "notes": "*Add vancomycin if meningitis or severe infection."
+      },
+      {
+        "result": "Streptococcus pyogenes (GAS), S. agalactiae (GBS), S. anginosus group",
+        "empiric": "Ampicillin or Cefazolin",
+        "notes": "Beta-hemolytic Strep routinely susceptible to beta-lactams."
+      },
+      {
+        "result": "Streptococcus species other than the above",
+        "empiric": "Ceftriaxone initially (clinical correlation — often contaminant)",
+        "notes": "Single-set growth: skin contamination possible."
+      },
+      {
+        "result": "Enterococcus faecalis (non-VRE)",
+        "empiric": "Ampicillin",
+        "notes": "ID consult. If vanA/vanB NOT detected, vancomycin likely susceptible."
+      },
+      {
+        "result": "Enterococcus faecium (non-VRE)",
+        "empiric": "Vancomycin",
+        "notes": "ID consult. If vanA/vanB NOT detected, vancomycin likely susceptible."
+      },
+      {
+        "result": "Vancomycin-Resistant Enterococcus (VRE)",
+        "empiric": "Daptomycin or Linezolid",
+        "notes": "ID consult required."
+      },
+      {
+        "result": "Listeria monocytogenes",
+        "empiric": "Ampicillin",
+        "notes": "ID consult. Concern for meningitis."
+      }
+    ],
+    "gramNegative": [
+      {
+        "result": "E. coli, Klebsiella oxytoca, K. pneumoniae, Proteus spp.",
+        "empiric": "Continue current therapy with gram-negative activity",
+        "notes": "When ESBL NOT detected: ceftriaxone, cefepime, and pip-tazo likely cover."
+      },
+      {
+        "result": "Salmonella spp.",
+        "empiric": "Ceftriaxone or Ampicillin-Sulbactam",
+        "notes": "Uncommon but likely pathogenic."
+      },
+      {
+        "result": "Haemophilus influenzae",
+        "empiric": "Ceftriaxone or Ampicillin-Sulbactam",
+        "notes": "Beta-lactamase production is narrow. NOT ESBL."
+      },
+      {
+        "result": "Neisseria meningitidis",
+        "empiric": "Ceftriaxone",
+        "notes": ""
+      },
+      {
+        "result": "Enterobacter cloacae complex, K. aerogenes, Citrobacter freundii, Hafnia alvei, Yersinia enterocolitica (HECK-Yes)",
+        "empiric": "Cefepime",
+        "notes": "Inducible AmpC. Avoid ceftriaxone and pip-tazo even if labeled susceptible (unless discussed with ID). If cefepime MIC > 4, use carbapenem."
+      },
+      {
+        "result": "Pseudomonas aeruginosa",
+        "empiric": "Piperacillin-Tazobactam or Cefepime",
+        "notes": "If not improving or MDR concern: add tobramycin. ID consult."
+      },
+      {
+        "result": "Acinetobacter spp.",
+        "empiric": "Ampicillin-Sulbactam (high dose)",
+        "notes": "Consult ID."
+      },
+      {
+        "result": "Serratia marcescens",
+        "empiric": "Cefepime",
+        "notes": "Low AmpC risk. If cefoxitin resistant, use cefepime."
+      },
+      {
+        "result": "Stenotrophomonas maltophilia",
+        "empiric": "Sulfamethoxazole-Trimethoprim",
+        "notes": "Minocycline has inadequate blood levels — don't use for bacteremia. Often colonizer."
+      },
+      {
+        "result": "Bacteroides fragilis",
+        "empiric": "Include anaerobic coverage",
+        "notes": "Options: metronidazole, pip-tazo, or amp-sulbactam."
+      }
+    ],
+    "resistanceMarkers": [
+      {
+        "marker": "CTX-M",
+        "drug": "Ertapenem",
+        "notes": "Indicates ESBL producer, usually Klebsiella spp. or E. coli."
+      },
+      {
+        "marker": "KPC",
+        "drug": "Meropenem-Vaborbactam",
+        "notes": "ID consult required. Indicates carbapenemase producer (CRE)."
+      },
+      {
+        "marker": "OXA",
+        "drug": "Ceftazidime-Avibactam (Acinetobacter: ampicillin-sulbactam)",
+        "notes": "ID consult required. Acinetobacter: amp-sulbactam best empiric; meropenem likely resistant."
+      },
+      {
+        "marker": "IMP / NDM / VIM",
+        "drug": "Cefiderocol",
+        "notes": "ID consult required. CRE not susceptible to ceftazidime-avibactam."
+      }
+    ],
+    "yeast": [
+      {
+        "result": "Candida albicans",
+        "empiric": "Fluconazole",
+        "notes": "Susceptible to fluconazole in 100% of local cases."
+      },
+      {
+        "result": "Candida auris",
+        "empiric": "Micafungin",
+        "notes": "Commonly resistant to antifungals. Isolation precautions. ID consult."
+      },
+      {
+        "result": "Nakaseomyces glabratus (formerly C. glabrata)",
+        "empiric": "Micafungin",
+        "notes": "De-escalate to fluconazole if susceptible."
+      },
+      {
+        "result": "Pichia kudriavzevii (formerly C. krusei)",
+        "empiric": "Micafungin",
+        "notes": "Routinely resistant to fluconazole."
+      },
+      {
+        "result": "Candida parapsilosis",
+        "empiric": "Micafungin",
+        "notes": "Susceptible to micafungin in 100% of local cases."
+      },
+      {
+        "result": "Candida tropicalis",
+        "empiric": "Micafungin or Fluconazole",
+        "notes": "Fluconazole susceptibility varies. Micafungin if critically ill."
+      },
+      {
+        "result": "Cryptococcus neoformans/gattii",
+        "empiric": "Amphotericin B",
+        "notes": "ID consult strongly recommended."
+      },
+      {
+        "result": "Yeast not identified by BioFire",
+        "empiric": "Micafungin",
+        "notes": "Treat initially and consult ID."
+      }
+    ]
+  },
+  "betaLactamCrossReactivity": {
+    "title": "Allergic Cross-Reactivity Between β-Lactams",
+    "note": "Chart addresses cross-reactivity with cephalosporins. Avoid penicillins in true penicillin allergy.",
+    "columns": [
+      "Drug",
+      "Identical R1/R2 side chains (highest risk)",
+      "Similar R1/R2 (low risk; caution if life-threatening prior)"
+    ],
+    "rows": [
+      [
+        "Ampicillin",
+        "CEPHALEXIN, CEFACLOR",
+        "Cefadroxil, cefprozil"
+      ],
+      [
+        "Amoxicillin",
+        "CEFADROXIL, CEFPROZIL",
+        "Cephalexin, cefaclor"
+      ],
+      [
+        "Cefaclor",
+        "AMPICILLIN, CEPHALEXIN",
+        "Penicillin, piperacillin, amoxicillin, cefadroxil, cefprozil"
+      ],
+      [
+        "Cefadroxil",
+        "AMOXICILLIN, CEFPROZIL",
+        "Penicillin, piperacillin, ampicillin, cephalexin, cefaclor"
+      ],
+      [
+        "Cefazolin",
+        "NONE",
+        "NONE"
+      ],
+      [
+        "Cefdinir",
+        "CEFIXIME",
+        "Ceftibuten, ceftriaxone, cefotaxime, cefpodoxime, ceftazidime, cefepime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Cefepime",
+        "CEFTRIAXONE, CEFOTAXIME, CEFPODOXIME",
+        "Cefuroxime, ceftibuten, cefdinir, cefixime, ceftazidime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Cefixime",
+        "CEFDINIR",
+        "Cefuroxime, ceftibuten, ceftriaxone, cefotaxime, cefpodoxime, ceftazidime, cefepime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Cefoxitin",
+        "CEFUROXIME",
+        "Cefotaxime"
+      ],
+      [
+        "Cefpodoxime",
+        "CEFTRIAXONE, CEFEPIME, CEFOTAXIME",
+        "Cefuroxime, ceftibuten, cefdinir, cefixime, ceftazidime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Cefprozil",
+        "AMOXICILLIN, CEFADROXIL",
+        "Penicillin, piperacillin, ampicillin, cephalexin, cefaclor"
+      ],
+      [
+        "Ceftaroline",
+        "NONE",
+        "Cefuroxime, ceftibuten, cefdinir, cefixime, ceftriaxone, cefotaxime, cefpodoxime, ceftazidime, cefepime, ceftolozane, cefiderocol"
+      ],
+      [
+        "Ceftazidime",
+        "AZTREONAM, CEFIDEROCOL",
+        "Ceftibuten, cefdinir, cefixime, ceftriaxone, cefotaxime, cefpodoxime, cefepime, ceftaroline, ceftolozane"
+      ],
+      [
+        "Ceftibuten",
+        "NONE",
+        "Cefdinir, cefixime, ceftriaxone, cefotaxime, cefpodoxime, ceftazidime, cefepime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Ceftolozane",
+        "NONE",
+        "Ceftibuten, cefdinir, cefixime, ceftriaxone, cefotaxime, cefpodoxime, ceftazidime, cefepime, ceftaroline, cefiderocol"
+      ],
+      [
+        "Ceftriaxone",
+        "CEFEPIME, CEFOTAXIME, CEFPODOXIME",
+        "Cefuroxime, ceftibuten, cefdinir, cefixime, ceftazidime, ceftaroline, ceftolozane, cefiderocol"
+      ],
+      [
+        "Cefuroxime",
+        "CEFOXITIN",
+        "Cefixime, ceftriaxone, cefotaxime, cefpodoxime, cefepime, ceftaroline"
+      ],
+      [
+        "Cephalexin",
+        "AMPICILLIN, CEFACLOR",
+        "Penicillin, piperacillin, amoxicillin, cefadroxil, cefprozil"
+      ],
+      [
+        "Penicillin G",
+        "—",
+        "Cefadroxil, cephalexin, cefprozil, cefaclor"
+      ]
+    ]
+  }
+}

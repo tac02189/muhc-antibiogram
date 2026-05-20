@@ -1,0 +1,251 @@
+[
+  {
+    "id": "uti-uncomplicated",
+    "name": "Uncomplicated UTI",
+    "icon": "droplet",
+    "context": "Otherwise healthy outpatient, no recent abx, no urologic abnormalities. Female non-pregnant.",
+    "firstLine": [
+      {
+        "drug": "nitrofurantoin",
+        "dose": "100 mg PO BID × 5 d",
+        "rationale": "Local E. coli susceptibility ~97%. Excellent urinary concentration."
+      },
+      {
+        "drug": "tmp-smx",
+        "dose": "1 DS PO BID × 3 d",
+        "rationale": "Local E. coli susceptibility ~75%. Avoid if local resistance > 20% or recent TMP-SMX use."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "cefazolin",
+        "dose": "Cephalexin 500 mg PO QID × 5–7 d",
+        "rationale": "Cephalexin reasonable second-line, especially for ESBL concerns are low."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "ciprofloxacin",
+        "reason": "Reserve fluoroquinolones — local E. coli FQ susceptibility ~70–75%; ADRs (tendon, QT, neurologic)."
+      },
+      {
+        "drug": "ampicillin",
+        "reason": "Local E. coli susceptibility ~52% — inadequate empiric coverage."
+      }
+    ],
+    "duration": "3–5 days (3 d TMP-SMX, 5 d nitrofurantoin)",
+    "notes": "Confirm uncomplicated criteria. For pregnant, complicated, or pyelo cases, see Complicated UTI / Pyelonephritis.",
+    "relevantOrganisms": [
+      "escherichia-coli",
+      "klebsiella-pneumoniae",
+      "proteus-mirabilis",
+      "staphylococcus-coagulase-negative-cons"
+    ]
+  },
+  {
+    "id": "uti-complicated",
+    "name": "Complicated UTI / Pyelonephritis",
+    "icon": "droplets",
+    "context": "Pyelonephritis, urosepsis, indwelling catheter, male, pregnant, or urologic abnormalities.",
+    "firstLine": [
+      {
+        "drug": "ceftriaxone",
+        "dose": "1–2 g IV q24h",
+        "rationale": "Local gram-negative susceptibility ~81–92%. First-line empiric for inpatient pyelo."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "piperacillin-tazobactam",
+        "dose": "3.375–4.5 g IV q6–8h",
+        "rationale": "If sepsis, recent broad-spectrum abx, or healthcare exposure. Avoid for HECK-Yes organisms."
+      },
+      {
+        "drug": "cefepime",
+        "dose": "1–2 g IV q8–12h",
+        "rationale": "If Pseudomonas risk or AmpC concern."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "ampicillin-sulbactam",
+        "reason": "Local E. coli susceptibility ~63–65% — borderline coverage for empiric."
+      },
+      {
+        "drug": "nitrofurantoin",
+        "reason": "Does NOT achieve adequate tissue levels — urinary tract concentration only. Don't use for pyelo."
+      }
+    ],
+    "duration": "5–7 days (depending on agent — see Shorter Is Better)",
+    "notes": "If patient has had recent abx, ESBL history, or healthcare exposure — consider cefepime or carbapenem and consult ID.",
+    "relevantOrganisms": [
+      "escherichia-coli",
+      "klebsiella-pneumoniae",
+      "proteus-mirabilis",
+      "enterococcus-faecalis",
+      "pseudomonas-aeruginosa"
+    ]
+  },
+  {
+    "id": "cap",
+    "name": "Community-Acquired Pneumonia (CAP)",
+    "icon": "wind",
+    "context": "Outpatient or inpatient (non-ICU) without risk factors for MRSA or Pseudomonas.",
+    "firstLine": [
+      {
+        "drug": "ceftriaxone",
+        "dose": "1–2 g IV q24h + macrolide or doxycycline",
+        "rationale": "Inpatient non-ICU. Covers S. pneumoniae, H. influenzae, Moraxella."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "levofloxacin",
+        "dose": "750 mg IV/PO q24h",
+        "rationale": "Respiratory fluoroquinolone monotherapy. Use when beta-lactam contraindicated."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "vancomycin",
+        "reason": "Not needed empirically unless MRSA risk factors (recent hospitalization, prior MRSA, severe CAP)."
+      }
+    ],
+    "duration": "3–5 days (if afebrile and clinically improving)",
+    "notes": "Per IDSA 2019. Add vancomycin OR linezolid for MRSA risk; add piperacillin-tazobactam OR cefepime for Pseudomonas risk.",
+    "relevantOrganisms": [
+      "streptococcus-pneumoniae-non-sterile",
+      "staphylococcus-aureus-mssa",
+      "staphylococcus-aureus-mrsa"
+    ]
+  },
+  {
+    "id": "hap-vap",
+    "name": "Hospital / Ventilator-Associated Pneumonia",
+    "icon": "wind",
+    "context": "Pneumonia developing ≥ 48 h after admission or ≥ 48 h after intubation.",
+    "firstLine": [
+      {
+        "drug": "cefepime",
+        "dose": "2 g IV q8h + vancomycin 15–20 mg/kg IV q8–12h",
+        "rationale": "Empiric coverage of Pseudomonas + MRSA. Local Pseudomonas cefepime susceptibility ~93–94%."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "piperacillin-tazobactam",
+        "dose": "4.5 g IV q6h (extended infusion) + vancomycin",
+        "rationale": "If no AmpC concern. ICU Pseudomonas pip-tazo ~92%."
+      },
+      {
+        "drug": "meropenem",
+        "dose": "1 g IV q8h + vancomycin",
+        "rationale": "If ESBL or carbapenem-needed pathogens suspected."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "ceftriaxone",
+        "reason": "No Pseudomonas coverage — inadequate empiric for HAP/VAP."
+      }
+    ],
+    "duration": "5–7 days (depending on pathogen)",
+    "notes": "Per IDSA 2016. De-escalate based on culture data. Add linezolid alternative if vancomycin contraindicated.",
+    "relevantOrganisms": [
+      "pseudomonas-aeruginosa",
+      "staphylococcus-aureus-mrsa",
+      "klebsiella-pneumoniae",
+      "enterobacter-cloacae",
+      "escherichia-coli"
+    ]
+  },
+  {
+    "id": "ssti",
+    "name": "Skin & Soft Tissue Infection",
+    "icon": "shield",
+    "context": "Non-purulent cellulitis vs purulent (abscess/furuncle). Severity determines coverage.",
+    "firstLine": [
+      {
+        "drug": "cefazolin",
+        "dose": "Cephalexin 500 mg PO QID (mild) or cefazolin 1–2 g IV q8h (mod)",
+        "rationale": "Non-purulent cellulitis: targets Streptococcus. Local MSSA cefazolin ~100% (via oxacillin)."
+      },
+      {
+        "drug": "tmp-smx",
+        "dose": "1–2 DS PO BID",
+        "rationale": "Purulent / suspected MRSA. Local MRSA TMP-SMX ~65–73%."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "clindamycin",
+        "dose": "300–450 mg PO TID or 600 mg IV q8h",
+        "rationale": "Beta-lactam allergy. Local MRSA clindamycin ~69–91% — variable, check sensitivities."
+      },
+      {
+        "drug": "vancomycin",
+        "dose": "15–20 mg/kg IV q8–12h",
+        "rationale": "Severe / inpatient MRSA-suspected. Local MRSA 100%."
+      },
+      {
+        "drug": "linezolid",
+        "dose": "600 mg IV/PO q12h",
+        "rationale": "PO option for MRSA outpatient bridge."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "ciprofloxacin",
+        "reason": "Poor Strep coverage and overuse driving resistance."
+      }
+    ],
+    "duration": "5–7 days (non-purulent cellulitis 5 d)",
+    "notes": "Per IDSA 2014. Source control (I&D) is the primary treatment for abscess.",
+    "relevantOrganisms": [
+      "staphylococcus-aureus-mssa",
+      "staphylococcus-aureus-mrsa",
+      "streptococcus-pyogenes-gas",
+      "streptococcus-agalactiae-gbs"
+    ]
+  },
+  {
+    "id": "intra-abdominal",
+    "name": "Intra-Abdominal Infection",
+    "icon": "circle",
+    "context": "Community-acquired complicated IAI (perforated appendix, diverticulitis, secondary peritonitis).",
+    "firstLine": [
+      {
+        "drug": "ceftriaxone",
+        "dose": "1–2 g IV q24h + metronidazole 500 mg IV q8h",
+        "rationale": "Covers gram-negatives + anaerobes. Standard for community-acquired moderate severity."
+      }
+    ],
+    "alternatives": [
+      {
+        "drug": "piperacillin-tazobactam",
+        "dose": "3.375–4.5 g IV q6–8h",
+        "rationale": "Single-agent for severe/healthcare-associated. Covers Pseudomonas + anaerobes."
+      },
+      {
+        "drug": "ampicillin-sulbactam",
+        "dose": "3 g IV q6h",
+        "rationale": "If pip-tazo unavailable. Note Enterococcus coverage added by ampicillin."
+      }
+    ],
+    "avoid": [
+      {
+        "drug": "ciprofloxacin",
+        "reason": "Insufficient gram-negative coverage as monotherapy locally."
+      }
+    ],
+    "duration": "4 days post source control (STOP-IT trial)",
+    "notes": "Source control (drainage, surgery) is essential. Per IDSA/SIS. Add Enterococcus coverage (ampicillin) for severe / immunocompromised.",
+    "relevantOrganisms": [
+      "escherichia-coli",
+      "klebsiella-pneumoniae",
+      "enterococcus-faecalis",
+      "bacteroides-fragilis",
+      "pseudomonas-aeruginosa"
+    ]
+  }
+]

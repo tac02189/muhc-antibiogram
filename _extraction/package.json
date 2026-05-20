@@ -1,0 +1,12 @@
+{
+  "name": "antibiogram-extraction",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "extract": "node extract.mjs"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.7.76"
+  }
+}

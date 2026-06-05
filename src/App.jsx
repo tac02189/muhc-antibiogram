@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 
 import antibiogramData from "./data/antibiogram.json";
 import antibioticsData from "./data/antibiotics.json";
@@ -11,7 +11,10 @@ import OrganismView from "./components/OrganismView.jsx";
 import AntibioticView from "./components/AntibioticView.jsx";
 import SyndromeView from "./components/SyndromeView.jsx";
 import ReferenceView from "./components/ReferenceView.jsx";
-import PdfViewer from "./components/PdfViewer.jsx";
+
+// PdfViewer pulls in pdf.js (~300KB). Lazy-loaded so it only ships
+// when the user actually opens the PDF.
+const PdfViewer = lazy(() => import("./components/PdfViewer.jsx"));
 
 const PDF_HREF = `${import.meta.env.BASE_URL}MUHC-UH-Antibiogram-2026.pdf`;
 
@@ -108,7 +111,15 @@ export default function App() {
       />
 
       {pdfOpen && (
-        <PdfViewer pdfHref={PDF_HREF} onClose={() => setPdfOpen(false)} />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-[100] bg-mizzou-black text-mizzou-gold flex items-center justify-center text-sm">
+              Loading PDF viewer…
+            </div>
+          }
+        >
+          <PdfViewer pdfHref={PDF_HREF} onClose={() => setPdfOpen(false)} />
+        </Suspense>
       )}
     </div>
   );

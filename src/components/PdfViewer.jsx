@@ -1,32 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { ArrowLeft, Download, ExternalLink } from "lucide-react";
+
+// Tell pdf.js where to find its worker. Vite hashes/bundles the worker
+// as a static asset so it's served from same origin with immutable
+// caching — no CDN needed (works on hospital wifi).
+pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 /**
  * Full-screen in-app PDF viewer.
  *
- * The PDF iframe fills the viewport. The Back button is a floating
- * action button positioned ABOVE the iframe (z-[200], position: fixed)
- * so it stays visible regardless of how the browser renders the PDF —
- * iOS in particular often draws PDF chrome over iframe content, so
- * we can't rely on a normal flex header staying on top.
+ * Renders the PDF using pdf.js (via react-pdf) into a vertically stacked
+ * canvas column at fit-to-width. iOS Safari's native iframe PDF viewer
+ * is broken for multi-page docs (shows only page 1, locked zoom), so we
+ * rasterize ourselves to get reliable scrolling + pinch zoom on every
+ * platform.
  *
  * Closes via: Back FAB · Escape key · device/browser back gesture.
- * Top-right has fallback "open in browser" and "download" controls.
  */
 export default function PdfViewer({ pdfHref, onClose }) {
+  const [numPages, setNumPages] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef(null);
+
+  // Body scroll lock, Escape close, device-back close (push a history
+  // entry so back gestures collapse the viewer instead of unloading
+  // the app).
   useEffect(() => {
-    // Lock body scroll while the viewer is open
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // Escape closes (desktop)
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
 
-    // Push a history entry so device back / swipe-back closes the viewer
-    // instead of unloading the app.
     const stateMarker = { __pdfViewer: true };
     window.history.pushState(stateMarker, "");
     const onPop = () => onClose();
@@ -42,7 +51,28 @@ export default function PdfViewer({ pdfHref, onClose }) {
     };
   }, [onClose]);
 
-  // safe-area-inset offsets so floating buttons clear the iOS notch
+  // Track container width so pages render at fit-to-width. We cap at 900px
+  // so on desktop the pages don't render absurdly large.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => setContainerWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const pageWidth = useMemo(() => {
+    if (!containerWidth) return undefined;
+    // 16px horizontal padding budget for breathing room
+    return Math.min(containerWidth - 16, 900);
+  }, [containerWidth]);
+
+  // Stable file prop — passing a new object on every render would make
+  // react-pdf re-fetch the PDF, which is wasteful and causes flicker.
+  const fileProp = useMemo(() => ({ url: pdfHref }), [pdfHref]);
+
   const fabTopLeft = {
     top: "max(0.5rem, env(safe-area-inset-top))",
     left: "max(0.5rem, env(safe-area-inset-left))",
@@ -54,20 +84,70 @@ export default function PdfViewer({ pdfHref, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-mizzou-black"
+      className="fixed inset-0 z-[100] bg-stone-300"
       role="dialog"
       aria-modal="true"
       aria-label="Antibiogram PDF viewer"
     >
-      {/* PDF surface — fills the viewport */}
-      <iframe
-        src={pdfHref}
-        title="MUHC Antibiogram 2026 PDF"
-        className="absolute inset-0 w-full h-full bg-stone-200 border-0"
-      />
+      {/* Scrollable page column */}
+      <div
+        ref={containerRef}
+        className="absolute inset-0 overflow-auto overscroll-contain"
+        style={{
+          // Leave room for the floating top bar
+          paddingTop: "calc(env(safe-area-inset-top) + 3.5rem)",
+          paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)",
+          paddingLeft: "env(safe-area-inset-left)",
+          paddingRight: "env(safe-area-inset-right)",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        <Document
+          file={fileProp}
+          onLoadSuccess={({ numPages: n }) => setNumPages(n)}
+          loading={
+            <div className="py-16 text-center text-sm text-stone-600">
+              Loading PDF…
+            </div>
+          }
+          error={
+            <div className="py-16 px-6 text-center text-sm text-red-700">
+              <p className="mb-2 font-medium">Couldn't render the PDF in-app.</p>
+              <a
+                href={pdfHref}
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 text-mizzou-gold-deep"
+              >
+                Open in browser instead
+              </a>
+            </div>
+          }
+          className="flex flex-col items-center gap-3"
+        >
+          {Array.from({ length: numPages }, (_, i) => (
+            <Page
+              key={`page_${i + 1}`}
+              pageNumber={i + 1}
+              width={pageWidth}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              className="shadow-lg bg-white"
+              loading={
+                <div
+                  className="bg-stone-200 animate-pulse rounded"
+                  style={{
+                    width: pageWidth ? `${pageWidth}px` : "100%",
+                    height: pageWidth ? `${pageWidth * 1.3}px` : "60vh",
+                  }}
+                />
+              }
+            />
+          ))}
+        </Document>
+      </div>
 
-      {/* Back FAB — fixed-positioned, very high z-index so it floats above
-          the iframe even if the browser draws PDF chrome on top of it. */}
+      {/* Floating Back FAB */}
       <button
         type="button"
         onClick={onClose}
@@ -79,11 +159,8 @@ export default function PdfViewer({ pdfHref, onClose }) {
         <span>Back</span>
       </button>
 
-      {/* Top-right fallback actions — open in browser / download */}
-      <div
-        className="fixed z-[200] flex gap-1.5"
-        style={fabTopRight}
-      >
+      {/* Top-right floating actions */}
+      <div className="fixed z-[200] flex gap-1.5" style={fabTopRight}>
         <a
           href={pdfHref}
           target="_blank"

@@ -42,6 +42,7 @@ export default function Header({
           href={pdfHref}
           target="_blank"
           rel="noreferrer"
+          download="MUHC-UH-Antibiogram-2026.pdf"
           className="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-mizzou-gold hover:text-white border border-mizzou-gold/40 hover:border-mizzou-gold rounded transition-colors"
         >
           <Download className="w-3.5 h-3.5" />

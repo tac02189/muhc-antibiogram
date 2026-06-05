@@ -40,7 +40,7 @@ export default function Footer({ microPhone, infectionPhone, version, lastUpdate
           <span>
             Antibiogram {version} · last updated {lastUpdated}
           </span>
-          <a href={pdfHref} target="_blank" rel="noreferrer" className="hover:text-mizzou-gold-deep underline underline-offset-2">
+          <a href={pdfHref} target="_blank" rel="noreferrer" download="MUHC-UH-Antibiogram-2026.pdf" className="hover:text-mizzou-gold-deep underline underline-offset-2">
             Download source PDF
           </a>
         </div>

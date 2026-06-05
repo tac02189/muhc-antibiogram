@@ -1,6 +1,6 @@
 import { AlertTriangle, Phone } from "lucide-react";
 
-export default function Footer({ microPhone, infectionPhone, version, lastUpdated, pdfHref }) {
+export default function Footer({ microPhone, infectionPhone, version, lastUpdated, onOpenPdf }) {
   return (
     <footer
       className="mt-12 border-t border-stone-200 bg-stone-100 text-stone-700"
@@ -40,9 +40,13 @@ export default function Footer({ microPhone, infectionPhone, version, lastUpdate
           <span>
             Antibiogram {version} · last updated {lastUpdated}
           </span>
-          <a href={pdfHref} target="_blank" rel="noreferrer" download="MUHC-UH-Antibiogram-2026.pdf" className="hover:text-mizzou-gold-deep underline underline-offset-2">
-            Download source PDF
-          </a>
+          <button
+            type="button"
+            onClick={onOpenPdf}
+            className="hover:text-mizzou-gold-deep underline underline-offset-2"
+          >
+            View source PDF
+          </button>
         </div>
       </div>
     </footer>

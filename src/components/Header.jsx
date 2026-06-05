@@ -1,4 +1,4 @@
-import { Download, Search, X } from "lucide-react";
+import { FileText, Search, X } from "lucide-react";
 
 const TABS = [
   { id: "organism", label: "Organism" },
@@ -17,7 +17,7 @@ export default function Header({
   audiences,
   version,
   lastUpdated,
-  pdfHref,
+  onOpenPdf,
 }) {
   return (
     <header
@@ -38,17 +38,15 @@ export default function Header({
             {version} · updated {lastUpdated}
           </p>
         </div>
-        <a
-          href={pdfHref}
-          target="_blank"
-          rel="noreferrer"
-          download="MUHC-UH-Antibiogram-2026.pdf"
+        <button
+          type="button"
+          onClick={onOpenPdf}
           className="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-mizzou-gold hover:text-white border border-mizzou-gold/40 hover:border-mizzou-gold rounded transition-colors"
         >
-          <Download className="w-3.5 h-3.5" />
+          <FileText className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Source PDF</span>
           <span className="sm:hidden">PDF</span>
-        </a>
+        </button>
       </div>
 
       {/* Audience selector */}

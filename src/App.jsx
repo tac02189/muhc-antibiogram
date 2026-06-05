@@ -11,6 +11,7 @@ import OrganismView from "./components/OrganismView.jsx";
 import AntibioticView from "./components/AntibioticView.jsx";
 import SyndromeView from "./components/SyndromeView.jsx";
 import ReferenceView from "./components/ReferenceView.jsx";
+import PdfViewer from "./components/PdfViewer.jsx";
 
 const PDF_HREF = `${import.meta.env.BASE_URL}MUHC-UH-Antibiogram-2026.pdf`;
 
@@ -19,6 +20,7 @@ export default function App() {
   const [audience, setAudience] = useState("all");
   const [search, setSearch] = useState("");
   const [pendingOrgId, setPendingOrgId] = useState(null);
+  const [pdfOpen, setPdfOpen] = useState(false);
 
   // Reset search when changing tabs (different meaning per tab).
   useEffect(() => setSearch(""), [tab]);
@@ -45,7 +47,7 @@ export default function App() {
         audiences={antibiogramData.audiences}
         version={antibiogramData.version}
         lastUpdated={antibiogramData.lastUpdated}
-        pdfHref={PDF_HREF}
+        onOpenPdf={() => setPdfOpen(true)}
       />
 
       <main
@@ -102,8 +104,12 @@ export default function App() {
         infectionPhone={antibiogramData.infectionPreventionPhone}
         version={antibiogramData.version}
         lastUpdated={antibiogramData.lastUpdated}
-        pdfHref={PDF_HREF}
+        onOpenPdf={() => setPdfOpen(true)}
       />
+
+      {pdfOpen && (
+        <PdfViewer pdfHref={PDF_HREF} onClose={() => setPdfOpen(false)} />
+      )}
     </div>
   );
 }

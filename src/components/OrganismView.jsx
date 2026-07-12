@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { ChevronRight, ArrowLeft, AlertCircle, Beaker } from "lucide-react";
 import SusceptibilityChip, { bandFor } from "./SusceptibilityChip.jsx";
+import useDetailScroll from "../hooks/useDetailScroll.js";
 
 const GRAM_LABEL = {
   positive: { label: "Gram +", className: "bg-purple-100 text-purple-800" },
@@ -47,6 +48,9 @@ export default function OrganismView({
     () => organisms.find((o) => o.id === selectedId) || null,
     [organisms, selectedId]
   );
+
+  // Mobile: top of detail on open, back to old list position on close.
+  useDetailScroll(!!selected);
 
   // On wide screens, default to the first filtered organism if nothing selected.
   const showList = !selected || window.innerWidth >= 768;

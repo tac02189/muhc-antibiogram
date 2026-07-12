@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ChevronRight, ArrowLeft, AlertCircle, Pill } from "lucide-react";
 import SusceptibilityChip, { bandFor } from "./SusceptibilityChip.jsx";
+import useDetailScroll from "../hooks/useDetailScroll.js";
 
 const GRAM_LABEL = {
   positive: { label: "Gram +", className: "bg-purple-100 text-purple-800" },
@@ -33,6 +34,9 @@ export default function AntibioticView({ antibiotics, organisms, audience, audie
   }, [antibiotics, search]);
 
   const selected = selectedSlug ? { slug: selectedSlug, meta: antibiotics[selectedSlug] } : null;
+
+  // Mobile: top of detail on open, back to old list position on close.
+  useDetailScroll(!!selected);
 
   return (
     <div className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:gap-6">

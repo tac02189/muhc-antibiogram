@@ -83,7 +83,7 @@ export default function Header({
               : tab === "antibiotic" ? "Search antibiotic (e.g., cefepime)…"
               : tab === "syndrome" ? "Search syndrome (e.g., UTI, pneumonia)…"
               : "Search reference…"}
-            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-800 text-white placeholder-stone-500 rounded-md border border-stone-700 focus:outline-none focus:border-mizzou-gold focus:ring-1 focus:ring-mizzou-gold"
+            className="w-full pl-8 pr-8 py-2 text-base bg-stone-800 text-white placeholder-stone-500 rounded-md border border-stone-700 focus:outline-none focus:border-mizzou-gold focus:ring-1 focus:ring-mizzou-gold"
           />
           {search && (
             <button

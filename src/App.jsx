@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 import antibiogramData from "./data/antibiogram.json";
 import antibioticsData from "./data/antibiotics.json";
@@ -11,10 +11,11 @@ import OrganismView from "./components/OrganismView.jsx";
 import AntibioticView from "./components/AntibioticView.jsx";
 import SyndromeView from "./components/SyndromeView.jsx";
 import ReferenceView from "./components/ReferenceView.jsx";
-
-// PdfViewer pulls in pdf.js (~300KB). Lazy-loaded so it only ships
-// when the user actually opens the PDF.
-const PdfViewer = lazy(() => import("./components/PdfViewer.jsx"));
+// The shell is eager (lightweight) so the Back button, scroll lock, and
+// history handling are available instantly and stay mounted even if the
+// heavy pdf.js chunk fails to load. The pdf.js renderer inside it
+// (PdfCanvas) is the lazy-loaded chunk.
+import PdfViewer from "./components/PdfViewer.jsx";
 
 const PDF_HREF = `${import.meta.env.BASE_URL}MUHC-UH-Antibiogram-2026.pdf`;
 
@@ -27,6 +28,35 @@ export default function App() {
 
   // Reset search when changing tabs (different meaning per tab).
   useEffect(() => setSearch(""), [tab]);
+
+  // Stable close handler so effects that depend on it don't tear down and
+  // rebuild on every render.
+  const closePdf = useCallback(() => setPdfOpen(false), []);
+
+  // Own the PDF overlay's browser-history entry HERE, keyed on the stable
+  // `pdfOpen` boolean — not inside the viewer component. This makes it
+  // lifecycle-safe: the effect runs exactly once when the overlay opens
+  // and cleans up once when it closes, so there's no teardown/rebuild
+  // race from changing callback identities, and StrictMode (which only
+  // double-invokes effects on component *mount*, not on state changes)
+  // doesn't thrash the history stack. The synthetic entry lets the device
+  // Back button / iOS swipe-back dismiss the overlay instead of leaving
+  // the app.
+  useEffect(() => {
+    if (!pdfOpen) return;
+    window.history.pushState({ __pdfViewer: true }, "");
+    const onPop = () => setPdfOpen(false);
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      // Only unwind our own entry. If the user closed via Back/swipe the
+      // browser already popped it (state is no longer ours) — so this
+      // guard prevents a double-pop that would navigate the app away.
+      if (window.history.state && window.history.state.__pdfViewer) {
+        window.history.back();
+      }
+    };
+  }, [pdfOpen]);
 
   // When a syndrome card requests an organism jump, switch tab + remember id.
   const jumpToOrganism = (id) => {
@@ -110,17 +140,7 @@ export default function App() {
         onOpenPdf={() => setPdfOpen(true)}
       />
 
-      {pdfOpen && (
-        <Suspense
-          fallback={
-            <div className="fixed inset-0 z-[100] bg-mizzou-black text-mizzou-gold flex items-center justify-center text-sm">
-              Loading PDF viewer…
-            </div>
-          }
-        >
-          <PdfViewer pdfHref={PDF_HREF} onClose={() => setPdfOpen(false)} />
-        </Suspense>
-      )}
+      {pdfOpen && <PdfViewer pdfHref={PDF_HREF} onClose={closePdf} />}
     </div>
   );
 }

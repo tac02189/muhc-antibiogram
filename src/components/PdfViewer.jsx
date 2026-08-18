@@ -1,77 +1,74 @@
-import { useEffect, useState, useRef, useMemo } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
-import { ArrowLeft, Download, ExternalLink } from "lucide-react";
+import { useEffect, useRef, lazy, Suspense } from "react";
+import { ArrowLeft, Download, ExternalLink, RotateCw } from "lucide-react";
+import PdfErrorBoundary from "./PdfErrorBoundary.jsx";
 
-// Tell pdf.js where to find its worker. Vite hashes/bundles the worker
-// as a static asset so it's served from same origin with immutable
-// caching — no CDN needed (works on hospital wifi).
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+// The heavy pdf.js renderer is the lazy chunk. Keeping it out of this
+// shell means the Back button, scroll lock, focus trap, and error
+// fallback are available instantly and remain usable even if this chunk
+// never loads.
+const PdfCanvas = lazy(() => import("./PdfCanvas.jsx"));
 
 /**
- * Full-screen in-app PDF viewer.
+ * Full-screen in-app PDF viewer — the always-eager shell.
  *
- * Renders the PDF using pdf.js (via react-pdf) into a vertically stacked
- * canvas column at fit-to-width. iOS Safari's native iframe PDF viewer
- * is broken for multi-page docs (shows only page 1, locked zoom), so we
- * rasterize ourselves to get reliable scrolling + pinch zoom on every
- * platform.
- *
- * Closes via: Back FAB · Escape key · device/browser back gesture.
+ * Owns everything that must work regardless of the pdf.js chunk: the
+ * floating Back button, body-scroll lock, Escape-to-close, focus
+ * management, and the error boundary around the lazy renderer. Browser
+ * history (device Back / swipe-back) is owned one level up in App, keyed
+ * on the open/closed state, so it stays lifecycle-safe under StrictMode.
  */
 export default function PdfViewer({ pdfHref, onClose }) {
-  const [numPages, setNumPages] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef(null);
+  const backRef = useRef(null);
 
-  // Body scroll lock, Escape close, device-back close (push a history
-  // entry so back gestures collapse the viewer instead of unloading
-  // the app).
+  // Lock body scroll while open.
   useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
+  // Escape closes.
+  useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-
-    const stateMarker = { __pdfViewer: true };
-    window.history.pushState(stateMarker, "");
-    const onPop = () => onClose();
-    window.addEventListener("popstate", onPop);
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("popstate", onPop);
-      if (window.history.state && window.history.state.__pdfViewer) {
-        window.history.back();
-      }
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Track container width so pages render at fit-to-width. We cap at 900px
-  // so on desktop the pages don't render absurdly large.
+  // Focus management: move focus into the dialog on open, trap Tab within
+  // it, and restore focus to the opener on close.
   useEffect(() => {
+    const opener = document.activeElement;
+    backRef.current?.focus();
+
+    const onKeyDown = (e) => {
+      if (e.key !== "Tab") return;
+      const focusables = containerRef.current?.querySelectorAll(
+        'a[href], button:not([disabled])'
+      );
+      if (!focusables || focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     const el = containerRef.current;
-    if (!el) return;
-    const measure = () => setContainerWidth(el.clientWidth);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
+    el?.addEventListener("keydown", onKeyDown);
+    return () => {
+      el?.removeEventListener("keydown", onKeyDown);
+      if (opener && typeof opener.focus === "function") opener.focus();
+    };
   }, []);
-
-  const pageWidth = useMemo(() => {
-    if (!containerWidth) return undefined;
-    // 16px horizontal padding budget for breathing room
-    return Math.min(containerWidth - 16, 900);
-  }, [containerWidth]);
-
-  // Stable file prop — passing a new object on every render would make
-  // react-pdf re-fetch the PDF, which is wasteful and causes flicker.
-  const fileProp = useMemo(() => ({ url: pdfHref }), [pdfHref]);
 
   const fabTopLeft = {
     top: "max(0.5rem, env(safe-area-inset-top))",
@@ -84,74 +81,60 @@ export default function PdfViewer({ pdfHref, onClose }) {
 
   return (
     <div
+      ref={containerRef}
       className="fixed inset-0 z-[100] bg-stone-300"
       role="dialog"
       aria-modal="true"
       aria-label="Antibiogram PDF viewer"
     >
-      {/* Scrollable page column */}
-      <div
-        ref={containerRef}
-        className="absolute inset-0 overflow-auto overscroll-contain"
-        style={{
-          // Leave room for the floating top bar
-          paddingTop: "calc(env(safe-area-inset-top) + 3.5rem)",
-          paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)",
-          paddingLeft: "env(safe-area-inset-left)",
-          paddingRight: "env(safe-area-inset-right)",
-          WebkitOverflowScrolling: "touch",
-        }}
-      >
-        <Document
-          file={fileProp}
-          onLoadSuccess={({ numPages: n }) => setNumPages(n)}
-          loading={
-            <div className="py-16 text-center text-sm text-stone-600">
-              Loading PDF…
-            </div>
-          }
-          error={
-            <div className="py-16 px-6 text-center text-sm text-red-700">
-              <p className="mb-2 font-medium">Couldn't render the PDF in-app.</p>
+      <PdfErrorBoundary
+        fallback={
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+            <p className="text-sm font-medium text-stone-700">
+              Couldn't load the PDF viewer.
+            </p>
+            <p className="text-xs text-stone-500 max-w-xs">
+              This can happen right after an app update or on a weak
+              connection. Reloading usually fixes it.
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center mt-1">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2.5 bg-mizzou-gold text-mizzou-black font-semibold text-sm rounded-full"
+              >
+                <RotateCw className="w-4 h-4" /> Reload app
+              </button>
               <a
                 href={pdfHref}
                 target="_blank"
                 rel="noreferrer"
-                className="underline underline-offset-2 text-mizzou-gold-deep"
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2.5 bg-stone-900 text-mizzou-gold font-semibold text-sm rounded-full"
               >
-                Open in browser instead
+                <ExternalLink className="w-4 h-4" /> Open in browser
               </a>
             </div>
+          </div>
+        }
+      >
+        <Suspense
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-stone-600">
+              Loading PDF…
+            </div>
           }
-          className="flex flex-col items-center gap-3"
         >
-          {Array.from({ length: numPages }, (_, i) => (
-            <Page
-              key={`page_${i + 1}`}
-              pageNumber={i + 1}
-              width={pageWidth}
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              className="shadow-lg bg-white"
-              loading={
-                <div
-                  className="bg-stone-200 animate-pulse rounded"
-                  style={{
-                    width: pageWidth ? `${pageWidth}px` : "100%",
-                    height: pageWidth ? `${pageWidth * 1.3}px` : "60vh",
-                  }}
-                />
-              }
-            />
-          ))}
-        </Document>
-      </div>
+          <PdfCanvas pdfHref={pdfHref} />
+        </Suspense>
+      </PdfErrorBoundary>
 
-      {/* Floating Back FAB */}
+      {/* Floating Back FAB — fixed + high z-index so it always floats above
+          the page canvases. 44px minimum touch target. */}
       <button
+        ref={backRef}
         type="button"
         onClick={onClose}
-        className="fixed z-[200] inline-flex items-center gap-1.5 px-3.5 py-2 bg-mizzou-gold text-mizzou-black font-semibold text-sm rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-yellow-300 transition-colors"
+        className="fixed z-[200] inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2.5 bg-mizzou-gold text-mizzou-black font-semibold text-sm rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-yellow-300 transition-colors"
         style={fabTopLeft}
         aria-label="Back to app"
       >
@@ -159,13 +142,13 @@ export default function PdfViewer({ pdfHref, onClose }) {
         <span>Back</span>
       </button>
 
-      {/* Top-right floating actions */}
+      {/* Top-right floating actions — 44px touch targets. */}
       <div className="fixed z-[200] flex gap-1.5" style={fabTopRight}>
         <a
           href={pdfHref}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center justify-center w-9 h-9 bg-stone-900 text-mizzou-gold rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-stone-700 transition-colors"
+          className="inline-flex items-center justify-center w-11 h-11 bg-stone-900 text-mizzou-gold rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-stone-700 transition-colors"
           aria-label="Open PDF in new tab"
           title="Open in new tab"
         >
@@ -174,7 +157,7 @@ export default function PdfViewer({ pdfHref, onClose }) {
         <a
           href={pdfHref}
           download="MUHC-UH-Antibiogram-2026.pdf"
-          className="inline-flex items-center justify-center w-9 h-9 bg-stone-900 text-mizzou-gold rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-stone-700 transition-colors"
+          className="inline-flex items-center justify-center w-11 h-11 bg-stone-900 text-mizzou-gold rounded-full shadow-xl ring-2 ring-mizzou-black hover:bg-stone-700 transition-colors"
           aria-label="Download PDF"
           title="Download"
         >

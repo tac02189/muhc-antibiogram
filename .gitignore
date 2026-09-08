@@ -35,3 +35,6 @@ _extraction/items.json
 _extraction/raw.txt
 _extraction/layout.txt
 _extraction/tables-v2.json
+
+# Machine-local Claude Code permissions (*.local does not match a .json suffix)
+.claude/settings.local.json

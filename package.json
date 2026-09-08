@@ -8,8 +8,7 @@
     "build": "vite build",
     "build:firebase": "cross-env BASE=/ vite build",
     "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "npm run deploy:firebase",
     "deploy:firebase": "npm run build:firebase && firebase deploy --only hosting"
   },
   "dependencies": {

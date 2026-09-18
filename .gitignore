@@ -26,7 +26,7 @@ dist-ssr
 *.env
 *service-account*.json
 *-service-account.json
-firebase-adminsdk*.json
+*firebase-adminsdk*.json
 secrets/
 
 # Extraction working dir — used to build src/data/, not part of the app

@@ -26,14 +26,19 @@ dist-ssr
 *.env
 *service-account*.json
 *-service-account.json
+# The leading * is load-bearing: the console emits
+# <project-id>-firebase-adminsdk-<hash>-<hash>.json, which the old
+# "firebase-adminsdk*.json" did not match. Do not "tidy" it away.
 *firebase-adminsdk*.json
 secrets/
 
-# Extraction working dir — used to build src/data/, not part of the app
+# Extraction working dir — used to build src/data/, not part of the app.
+# Scripts and the lockfile ARE tracked; these are regenerated intermediates.
 _extraction/node_modules
 _extraction/items.json
 _extraction/raw.txt
 _extraction/layout.txt
+_extraction/tables.json
 _extraction/tables-v2.json
 
 # Machine-local Claude Code permissions (*.local does not match a .json suffix)

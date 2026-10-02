@@ -124,7 +124,15 @@ export default function PdfCanvas({ pdfHref }) {
   }, []);
 
   // Stable file prop — a new object each render would re-fetch the PDF.
-  const fileProp = useMemo(() => ({ url: pdfHref }), [pdfHref]);
+  //
+  // disableRange is deliberate (peer-review finding F9, 2026-10-01). The service
+  // worker serves this PDF from the precache as a COMPLETE response; Workbox has
+  // no range-response handling. pdf.js, seeing Accept-Ranges on the cached
+  // response, may issue a Range request, and its fetch reader accepts a 200 as
+  // though it were the requested range — then associates those bytes with a
+  // nonzero starting offset, which corrupts parsing. The document is 840 KB and
+  // fully cached, so ranged fetching buys nothing here.
+  const fileProp = useMemo(() => ({ url: pdfHref, disableRange: true }), [pdfHref]);
 
   return (
     <div

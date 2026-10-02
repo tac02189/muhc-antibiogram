@@ -21,13 +21,34 @@ const PDF_HREF = `${import.meta.env.BASE_URL}MUHC-UH-Antibiogram-2026.pdf`;
 
 export default function App() {
   const [tab, setTab] = useState("organism");
-  const [audience, setAudience] = useState("all");
+  // Resume the population the reader had selected if a service-worker update
+  // forced a reload mid-lookup (see src/main.jsx — peer-review finding F11).
+  // Read once and cleared immediately, so this only ever applies to that
+  // handoff and a manual reload still starts at the default.
+  const [audience, setAudience] = useState(() => {
+    try {
+      const handed = sessionStorage.getItem("antibiogram:audience-across-update");
+      if (handed) {
+        sessionStorage.removeItem("antibiogram:audience-across-update");
+        if (antibiogramData.audiences[handed]) return handed;
+      }
+    } catch {
+      // Private-mode sessionStorage can throw; the default is a safe fallback.
+    }
+    return "all";
+  });
   const [search, setSearch] = useState("");
   const [pendingOrgId, setPendingOrgId] = useState(null);
   const [pdfOpen, setPdfOpen] = useState(false);
 
   // Reset search when changing tabs (different meaning per tab).
   useEffect(() => setSearch(""), [tab]);
+
+  // Expose the current population for the update-reload handoff in main.jsx,
+  // which runs outside React and so cannot read this state directly.
+  useEffect(() => {
+    window.__antibiogramAudience = audience;
+  }, [audience]);
 
   // Stable close handler so effects that depend on it don't tear down and
   // rebuild on every render.

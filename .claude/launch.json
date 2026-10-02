@@ -9,6 +9,15 @@
         "dev"
       ],
       "port": 5173
+    },
+    {
+      "name": "antibiogram-preview",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": [
+        ".claude/npm-run.cjs",
+        "preview:firebase"
+      ],
+      "port": 4173
     }
   ]
 }

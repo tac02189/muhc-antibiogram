@@ -6,12 +6,33 @@
 //
 // Run: node extract.mjs
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PDF_PATH = join(__dirname, "..", "MUHC UH Antibiogram 2026.pdf");
+
+// Read the SAME file the app serves, and DISCOVER it rather than hardcoding
+// the year. This used to be a literal "../MUHC UH Antibiogram 2026.pdf" — a
+// byte-identical duplicate of public/'s copy — which quietly broke the annual
+// update: CLAUDE.md step 1 says to drop the new PDF into public/, so a 2027
+// run would have re-extracted the 2026 file and emitted last year's numbers
+// under this year's label, with no error anywhere.
+//
+// Globbing public/ removes this file from the annual checklist and, more
+// importantly, converts the ambiguous cases into loud failures: zero PDFs or
+// two PDFs both stop the run instead of silently picking one.
+const PUBLIC_DIR = join(__dirname, "..", "public");
+const pdfs = (await readdir(PUBLIC_DIR)).filter((f) => f.toLowerCase().endsWith(".pdf"));
+if (pdfs.length !== 1) {
+  throw new Error(
+    `Expected exactly 1 PDF in public/, found ${pdfs.length}${pdfs.length ? `: ${pdfs.join(", ")}` : ""}. ` +
+      `The extraction pipeline must read the same PDF the app serves — resolve this before extracting.`
+  );
+}
+const PDF_PATH = join(PUBLIC_DIR, pdfs[0]);
+console.log(`Source PDF: ${pdfs[0]}`);
 
 // pdfjs-dist exposes a legacy build that works in plain Node.
 const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
@@ -100,4 +121,23 @@ await writeFile(join(__dirname, "raw.txt"), rawLines.join("\n"), "utf8");
 await writeFile(join(__dirname, "layout.txt"), layoutLines.join("\n"), "utf8");
 await writeFile(join(__dirname, "items.json"), JSON.stringify(allItems, null, 2), "utf8");
 
-console.log("Wrote raw.txt, layout.txt, items.json");
+// Record WHICH PDF produced these intermediates, by content hash.
+//
+// Without this nothing connects the intermediates to the file the app serves,
+// so dropping in next year's PDF while leaving last year's items.json/layout.txt
+// in place would let verify-data.mjs compare the old artifacts to each other and
+// report PASS — shipping last year's numbers alongside this year's PDF
+// (peer-review finding F6, 2026-10-01). verify-data.mjs re-hashes public/'s PDF
+// and refuses to run if it does not match this.
+const sourceDigest = createHash("sha256").update(data).digest("hex");
+await writeFile(
+  join(__dirname, "source.json"),
+  JSON.stringify(
+    { pdf: pdfs[0], sha256: sourceDigest, pages: doc.numPages, extractedAt: new Date().toISOString() },
+    null,
+    2
+  ) + "\n",
+  "utf8"
+);
+
+console.log(`Wrote raw.txt, layout.txt, items.json, source.json (sha256 ${sourceDigest.slice(0, 12)}…)`);

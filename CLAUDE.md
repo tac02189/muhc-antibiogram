@@ -23,6 +23,7 @@ Everything else in the app derives mechanically from the source PDF. This file i
 - **React 18** + **Vite 5** — single-page, no router; four tabs are local state in `App.jsx`
 - **Tailwind CSS 3**; **lucide-react** icons
 - **react-pdf 10** (pdf.js) — in-app PDF viewer, lazy-loaded
+- **vite-plugin-pwa 1** (Workbox) — offline support; see *Offline support* below
 - **Firebase — Hosting only.** No Firestore, no Auth, no Analytics. Fully static; there is no `firebase.js` and none is needed.
 - Fonts: Fraunces (display) · Inter (sans) · JetBrains Mono (data)
 
@@ -101,13 +102,97 @@ Also: editing a hook's **hook count** while the dev server is live throws React 
 
 ## Annual update — when the 2027 PDF drops
 
-1. Drop the new PDF into `public/`, then update the filename in **both** places it is hardcoded — `PDF_HREF` (`src/App.jsx:20`) and the `download` attribute (`src/components/PdfViewer.jsx:159`). Missing the second one serves the new PDF under last year's filename.
+1. **Replace the PDF in `public/`, deleting last year's** — the pipeline now globs for exactly one PDF there and refuses to run on zero or two, so leaving both stops the extraction instead of silently picking one. Then update the filename in **both** places it is hardcoded: `PDF_HREF` (`src/App.jsx:20`) and the `download` attribute (`src/components/PdfViewer.jsx:159`). Missing the second one serves the new PDF under last year's filename.
 2. Update the hardcoded per-page column X-coordinates in `_extraction/parse-v2.mjs` if the table layout changed.
 3. `cd _extraction && node extract.mjs && node parse-v2.mjs && node build-app-data.mjs`
-4. **Spot-check at least 5 organisms against the PDF by hand.** The parser is coordinate-based and fails quietly when a column shifts.
-5. `npm run deploy`, then bump the git tag.
+4. **`node verify-data.mjs`** — must print PASS. It refuses to run unless the intermediates were extracted from the PDF now sitting in `public/` (SHA-256, recorded in `source.json`), then checks every column anchor against the header the PDF prints at that x, matches all 75 printed data rows one-to-one against JSON organisms, and compares every cell in both directions. Exits 1 on any disagreement.
+5. **Still spot-check at least 5 organisms against the PDF by hand.** Step 4 proves the extraction faithfully reproduces the PDF; it says nothing about whether the PDF's own numbers are right, and it is not clinical verification. A green step 4 is not a reason to skip this.
+6. `npm run deploy`, then bump the git tag.
 
-**`_extraction/` layout:** `extract.mjs` → `parse-v2.mjs` → `build-app-data.mjs` is the live chain; `build-app-data.mjs` reads `tables-v2.json`. Scripts and `package-lock.json` are tracked (the lockfile pins `pdfjs-dist`, so next year's run reproduces this year's coordinates); the generated intermediates (`items.json`, `raw.txt`, `layout.txt`, `tables.json`, `tables-v2.json`) are gitignored. `parse-tables.mjs` is the **superseded v1 parser**, kept only because `parse-v2.mjs:50` cites its output as the provenance of the column anchors — it is not part of the pipeline.
+### Why step 4 exists, and what it does not cover
+
+`parse-v2.mjs` maps numbers to drugs using hand-typed per-page column x-coordinates. The design is deliberate and works, but its failure mode is **silent**: if a column shifts, every number still lands in *some* column — just the wrong one — and the output looks entirely plausible. Re-running the pipeline cannot catch this (same parser, same coordinates, same answer), so verification has to come from outside that code path.
+
+**The whole thing is driven from the PDF, not from the JSON — and that was the correction that mattered.** The first version of `verify-data.mjs` only ever inspected what the JSON *claimed*. An independent Codex review (gpt-6-astra, 2026-10-01) identified the gap, and running its cases confirmed every one: deleting a susceptibility key, deleting an audience bucket, deleting a whole organism, inventing a drug with no column on that page, renaming an organism so no row matched while corrupting one of its values, mutating `isolateCount` to another number printed on the same row — and `organisms: []`, an entirely empty dataset — **all printed PASS.** A verifier that green-lights an empty dataset is worse than none, because it manufactures confidence. Nothing in it fails open now: an unmatched row, an unexpected key or a missing cell is a failure, never a note.
+
+Four checks, in order:
+
+- **Source binding.** Re-hashes the single PDF in `public/` and refuses to run unless it matches the `sha256` in `source.json`, written by `extract.mjs`. Without this, dropping in next year's PDF while leaving last year's intermediates in place compared the old artifacts to each other and passed.
+- **Check A — right drug.** Each anchor against the header text the PDF prints at that x, partitioned with the same nearest-anchor rule `snapValuesToColumns` uses for values. Also rejects duplicate anchors, duplicate canonical slugs, and labels with no SLUG mapping. 112 anchors across 6 pages.
+- **Check B — right row, one-to-one.** All 75 data rows the PDF prints are enumerated from `layout.txt` and matched to JSON organisms bijectively. A PDF row with no JSON organism fails; a JSON bucket holding values with no PDF row fails; an ambiguous match fails rather than guessing.
+- **Check C — right column, both directions.** `{slug: value}` is reconstructed from the PDF's geometry and diffed against the JSON PDF→JSON *and* JSON→PDF, so a dropped key and an invented value both fail. Isolate counts and nitrofurantoin denominators are checked against their **own** columns, not "is this number anywhere on the row". ~1170 cells.
+
+A run that compares implausibly little also fails outright, on both row and cell counts — that is what stops a near-empty dataset from printing PASS.
+
+**14 controls currently fail it as they should** — wrong value · adjacent-row swap · within-row drug swap · plausible-but-wrong value · dropped-to-null · invented value over a dash · deleted key · invented drug with no column · deleted audience bucket · deleted organism · `organisms: []` · unmatchable name with a corrupted value · wrong isolateCount · wrong nitrofurantoinTested. **Re-run all 14 after any edit to this script.**
+
+Six traps are already handled — do not "simplify" them away:
+
+- Anchors are read off **glyph origins, not centres**. Matching on centres shifts every column by one and reports a correct table as entirely mislabelled.
+- Check A compares by **prefix, not substring**. The PDF legitimately prints a longer qualifier than the parser's label — "Nitrofurantoin (urinary isolates only)" against "Nitrofurantoin (urinary)" — but a substring test also accepts an anchor that has drifted onto a neighbouring header.
+- Rows are found by locating the **value-bearing line first**, then attaching each name-only line to its nearest value line. Walking forward from name lines instead loses rows: consuming "Streptococcus pneumoniae" as part of the preceding non-sterile row dropped the blood/CSF row entirely, 73 found where the PDF prints 75.
+- Rotated section labels are glued onto names with no space (`NegativeKlebsiella oxytoca`), names wrap, and the qualifier that distinguishes two rows can print *after* the numbers — `Streptococcus pneumoniae`, then the values, then `(blood/cerebrospinal fluid)*`, whose sibling row shares its prefix.
+- pdf.js emits numbers as **separate glyph runs** — `"8","3"` for 83, `"1","265"` for 1265 — so Check C merges adjacent digit runs before snapping, keeping the first fragment's x. That merge agreeing with the parser on every cell is the evidence it is faithful.
+- An audience spans several pages (`all` is printed across three), so the reverse check is per **audience**, not per page. Done per page it flags every gram-negative organism as missing from the gram-positive table.
+
+**Known limitations — real, and not fixed:**
+
+- **The canonical drug-name map is unvalidated.** Parser and verifier both read `parse-v2.mjs`'s `SLUG`, so swapping two slugs there and regenerating would satisfy every check (Codex F7). Confirming drug identity needs a human reading the PDF's headers.
+- **Literal slicing is textual.** `PAGE_TABLES` and `SLUG` are sliced out of the parser source by brace matching. A duplicate declaration now throws, but a brace inside a string or comment could still mis-slice (F12).
+- It cannot tell you the PDF's own numbers are right. That is step 5, and it is not optional.
+
+**Self-test.** `ANTIBIOGRAM_JSON=<path>` points it at a different file, so you can corrupt a copy and confirm it still fails. A check that cannot fail is worth nothing, and a passing run looks identical either way.
+
+
+**`_extraction/` layout:** `extract.mjs` → `parse-v2.mjs` → `build-app-data.mjs` is the live chain, with `verify-data.mjs` as a read-only check alongside it; `build-app-data.mjs` reads `tables-v2.json`. Scripts and `package-lock.json` are tracked (the lockfile pins `pdfjs-dist`, so next year's run reproduces this year's coordinates); the generated intermediates (`items.json`, `raw.txt`, `layout.txt`, `tables.json`, `tables-v2.json`) are gitignored. **`source.json` is the exception and IS tracked** — it records the filename, SHA-256 and page count of the PDF the committed data was extracted from, so provenance survives in git history rather than only on the machine that last ran the pipeline. `parse-tables.mjs` is the **superseded v1 parser**, kept only because `parse-v2.mjs:50` cites its output as the provenance of the column anchors — it is not part of the pipeline. `verify-data.mjs` reads `PAGE_TABLES` by slicing the literal out of `parse-v2.mjs` rather than importing it, because importing that script would re-run it and rewrite a pipeline intermediate as a side effect of verifying.
+
+## Offline support — the service worker
+
+Added 2026-10-01 via `vite-plugin-pwa` (Workbox, `generateSW`). The manifest already made the app installable; without a service worker an installed copy was a blank page the moment the network dropped, which for a bedside phone tool was the biggest functional gap in the app.
+
+13 precached entries, ~2.79 MB: the shell, the hashed JS/CSS (the antibiogram JSON is `import`ed, so the data is *inside* `index-<hash>.js` — there is no separate data cache to go stale on its own), the icons, pdf.js's worker and lazy chunk, and the 840 KB PDF itself. Verified end-to-end by stopping the server and reloading: the app renders, and the full PDF still serves.
+
+Four decisions worth keeping:
+
+| Decision | Why |
+|---|---|
+| **`manifest: false`** | `public/manifest.webmanifest` is hand-maintained and its icon filenames are deliberately `-v3`-suffixed (see *App icons* below). Letting the plugin emit a second manifest would fight that. |
+| **`registerType: "autoUpdate"` + the update handling in `src/main.jsx`** | **These are a pair — removing either re-introduces stale clinical data.** autoUpdate gives the SW `skipWaiting` + `clientsClaim`, so a new version activates and claims open pages. But the generated `registerSW.js` only *registers*: the claimed page keeps running the bundle it already loaded, so the first visit after a deploy would still render the previous data. `main.jsx` closes that — see the block there, which carries the three peer-review fixes (F2/F3/F11) and why each is not hypothetical. |
+| **`globIgnores: ["icon-source.png", "og-image-v3.png"]`** | Both are served but never requested by the running app — `icon-source.png` is the 1 MB master artwork, and the OG image is only fetched by social crawlers, which do not run service workers. Precaching them cost 1.26 MB on every phone, 31% of the install, for nothing. |
+| **`maximumFileSizeToCacheInBytes: 3 MiB`** | Above the 2 MiB default. pdf.js's worker is ~1 MB today; a file that outgrows the cap is dropped from the precache **with no error**, which is the quiet failure this whole feature exists to avoid. |
+
+Google Fonts are cross-origin and so cannot be precached — a `CacheFirst` runtime rule covers them. CacheFirst is safe for immutable font files; do not extend that handler to anything carrying clinical data.
+
+**This does not retire `PdfErrorBoundary`.** That boundary exists because an open PWA can request a lazy chunk hash that no longer exists after a redeploy (see the PDF-viewer table above). The service worker narrows that window considerably — the new worker precaches the new hashes, and the `controllerchange` reload moves the page onto them promptly — but it does not close it: a page still running the old bundle that lazy-imports the old `PdfCanvas-<hash>.js` finds it gone from both the refreshed precache and the host. The boundary is still the backstop. Keep both.
+
+**The SW does not exist in dev** (`devOptions.enabled: false`, because it makes HMR behave like app bugs). To exercise it: `npm run build:firebase` then `npm run preview:firebase` (port 4173, `antibiogram-preview` in `.claude/launch.json`). Testing against the dev server will show no service worker at all and look like the feature is missing.
+
+`firebase.json`'s existing header shape already suits this: `sw.js` sits at the root and so is covered by the `**` → `no-cache` rule, which is what lets a new worker be discovered promptly.
+
+
+### What the peer review changed here, and the one thing still open
+
+This feature was reviewed by Codex (gpt-6-astra) on 2026-10-01 against exactly the question that matters — *is there any path by which a resident is served stale susceptibility data?* It found several. These are fixed:
+
+| Finding | Was | Now |
+|---|---|---|
+| **F2** controller guard froze | `const hadController = Boolean(controller)` evaluated once. On a first-ever visit it is `false` **forever**, so every later update to that still-open tab was ignored — the exact staleness the reload exists to prevent. | Tracks the transition: only the first claim is swallowed, every subsequent controller change reloads. |
+| **F3** no bounded freshness | Nothing checked for updates after load. A phone resuming an installed app fires no `load`, so a backgrounded copy could stay on an old release indefinitely. | `registration.update()` on load, on `online`, and on becoming visible. (`register()` again is *not* a substitute — Chromium and WebKit can both reuse an identical registration without re-fetching.) |
+| **F9** PDF range requests | The SW returns the precached PDF as a complete response with no range handling, while pdf.js may issue a Range request and accept a `200` as though it were the range — corrupting offsets. | `disableRange: true` in `PdfCanvas.jsx`. The document is 840 KB and fully cached; ranged fetching bought nothing. |
+| **F10** fallback masked real files | Any unmatched in-scope navigation returned the app shell — navigating to `/og-image-v3.png` served HTML instead of the image. | `navigateFallbackDenylist` excludes `/assets/` and anything with a file extension. Verified: that URL now returns `image/png`. |
+| **F11** reload changed the population | The forced reload reset the audience filter to **All**, silently moving the reader off ICU/ED/Peds mid-lookup. | The selected audience is carried across an update reload only (session handoff, read once and cleared), so a manual reload still starts at the default. |
+| **F13** wrong comment | A comment claimed an oversize asset is dropped from the precache "with no error". | It actually **fails the build** — vite-plugin-pwa turns the size warning into a throw. Comment corrected. |
+
+**⚠️ Still open — needs a decision, not a patch (Codex F1, rated High).** `firebase.json`'s catch-all rewrite (`"source": "**"` → `/index.html`) means a request for a *missing* asset returns `index.html` with HTTP 200. Workbox accepts any sub-400 response into the precache without checking MIME type, so if an asset fetch during install races a deploy that removed that file, **HTML can be cached under a JavaScript URL** — and the app then loads blank on every subsequent launch, because it never reaches `main.jsx` and so cannot self-recover. Ordinary reloads reuse the poisoned entry; restoring the file on the server does not overwrite a cache hit.
+
+The fix is to stop the rewrite answering for asset-shaped paths, but it is a live-hosting change with a real tradeoff and it was deliberately **not** made unilaterally:
+
+- Firebase's `regex` rewrites use RE2, which has **no lookahead**, so the usual `^(?!...)` exclusion pattern does not work.
+- The app has no router, so `/` is the only navigation it actually needs — the catch-all could in principle go entirely.
+- But the retired `gh-pages` branch forwards deep links (`/muhc-antibiogram/foo` → `/foo`), and those would then 404 instead of loading the app. That forwarding is the reason the catch-all is earning its keep.
+
+So: narrowing it trades cache-poisoning robustness against old bookmarked deep links resolving. Decide which matters more before changing it.
+
 
 ## App icons
 

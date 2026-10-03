@@ -7,6 +7,14 @@
       "PO"
     ]
   },
+  "penicillin-iv": {
+    "name": "Penicillin (IV)",
+    "class": "penicillin",
+    "routes": [
+      "IV"
+    ],
+    "notes": "Reported as a separate IV column on the all-locations gram-positive panel."
+  },
   "oxacillin": {
     "name": "Oxacillin",
     "class": "penicillin",
@@ -39,12 +47,12 @@
     "notes": "Avoid for HECK-Yes organisms (inducible AmpC)."
   },
   "cefazolin": {
-    "name": "Cefazolin",
+    "name": "Cefazolin (urinary isolates)",
     "class": "1st-gen cephalosporin",
     "routes": [
       "IV"
     ],
-    "notes": "Urinary isolates only on the panel."
+    "notes": "Urinary breakpoint. The panel has no systemic cefazolin column — do not read this as systemic susceptibility."
   },
   "cefoxitin": {
     "name": "Cefoxitin",
@@ -54,7 +62,7 @@
     ]
   },
   "ceftriaxone": {
-    "name": "Ceftriaxone (= cefotaxime)",
+    "name": "Cefotaxime/ceftriaxone",
     "class": "3rd-gen cephalosporin",
     "routes": [
       "IV"
@@ -200,7 +208,15 @@
     "routes": [
       "PO"
     ],
-    "notes": "Urinary tract only — no systemic activity."
+    "notes": "Urinary tract only — no systemic activity. Reported as a plain column on the all-locations gram-positive panel."
+  },
+  "nitrofurantoin-urinary": {
+    "name": "Nitrofurantoin (urinary isolates)",
+    "class": "nitrofuran",
+    "routes": [
+      "PO"
+    ],
+    "notes": "Urinary tract only — no systemic activity. Urinary-isolate column on the gram-negative and ED/ICU/Peds panels."
   },
   "fluconazole": {
     "name": "Fluconazole",

@@ -6,7 +6,7 @@
     "context": "Otherwise healthy outpatient, no recent abx, no urologic abnormalities. Female non-pregnant.",
     "firstLine": [
       {
-        "drug": "nitrofurantoin",
+        "drug": "nitrofurantoin-urinary",
         "dose": "100 mg PO BID × 5 d",
         "rationale": "Local E. coli susceptibility ~97%. Excellent urinary concentration."
       },
@@ -72,7 +72,7 @@
         "reason": "Local E. coli susceptibility ~63–65% — borderline coverage for empiric."
       },
       {
-        "drug": "nitrofurantoin",
+        "drug": "nitrofurantoin-urinary",
         "reason": "Does NOT achieve adequate tissue levels — urinary tract concentration only. Don't use for pyelo."
       }
     ],

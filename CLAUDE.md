@@ -42,6 +42,23 @@ Four tabs (Organism · Drug · Empiric · Reference) and four audience filters (
 
 **Color coding is medical convention, not decoration:** green ≥80% · yellow 41–79% · red ≤40% · gray dash = not tested. Organisms under 30 isolates carry a `low n` flag (CLSI threshold, from `legend.isolateMinimum`). Do not restyle these thresholds.
 
+⚠️ **`src/data/*.json` are GENERATED — all four of them.** `build-app-data.mjs` holds the antibiotic metadata table *and* the six syndrome definitions inline, so editing `antibiotics.json` or `syndromes.json` directly works until the next pipeline run silently reverts it. Edit `_extraction/build-app-data.mjs` and re-run.
+
+### Qualified drug columns report separately — do not re-merge them
+
+Decided by Thiago 2026-10-03, after `drug-map-report.mjs` surfaced that the PDF prints some drugs under two different headers and the parser was collapsing them into one row.
+
+| PDF headers | Slugs | Why separate |
+|---|---|---|
+| `Penicillin` / `Penicillin (IV)` | `penicillin` / `penicillin-iv` | Different determinations. `(IV)` appears only on the all-locations gram-positive table; plain only on ED/ICU/Peds. Merged, switching the audience filter silently changed which column a number came from while the label stayed identical. |
+| `Nitrofurantoin` / `Nitrofurantoin (urinary)` | `nitrofurantoin` / `nitrofurantoin-urinary` | Same shape: plain on the all-locations gram-positive table, urinary on the gram-negative and ED/ICU/Peds tables. |
+
+Verified after the split: **no row carries both halves of either pair** — the columns are genuinely disjoint — and `verify-data.mjs` still passes with the same 112 anchors / 75 rows / 1170 cells, so nothing was lost or duplicated.
+
+**Cefazolin is deliberately NOT split, because there is nothing to split.** Every cefazolin column in the 2026 PDF is the urinary one; there is no systemic column anywhere in the document. The defect there was labelling: the qualifier lived only in `notes`, which the UI renders as a hover-tooltip icon — effectively invisible on the phone this tool targets — so a bare "Cefazolin 88%" read as systemic susceptibility against a more permissive urinary breakpoint. The qualifier is now in the **name** (`Cefazolin (urinary isolates)`). If a future PDF adds a systemic column, give it its own slug; do not widen `cefazolin`.
+
+**Two syndrome cross-links moved with the split** (`nitrofurantoin` → `nitrofurantoin-urinary`, in the uncomplicated-UTI first-line and the pyelo `avoid` entry). Only the `drug` slug changed — no dose, rationale or recommendation was touched. Both cards are about *E. coli* UTI, so the urinary series is the one they mean, and leaving them on the plain slug would have pointed them at gram-positive-only data that does not exist for 3 of the 4 audiences.
+
 ### The PDF viewer — four deliberate decisions, none of them accidental
 
 `Header`/`Footer` open a full-screen in-app viewer. Every choice below was forced by a real failure; a future session "simplifying" any of them will reintroduce a shipped bug.

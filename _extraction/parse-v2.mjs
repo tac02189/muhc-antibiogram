@@ -9,12 +9,22 @@ const allItems = JSON.parse(await readFile(join(__dirname, "items.json"), "utf8"
 
 // Canonical antibiotic slug (used as JSON key — kebab-case, no special chars)
 const SLUG = {
+  // Qualified column headers get their OWN slug — they are different
+  // determinations, not aliases (Thiago, 2026-10-03). Collapsing them meant
+  // the audience filter silently swapped which column a number came from
+  // while the displayed drug name stayed identical.
   "Penicillin": "penicillin",
-  "Penicillin (IV)": "penicillin",
+  "Penicillin (IV)": "penicillin-iv",
   "Oxacillin": "oxacillin",
   "Ampicillin": "ampicillin",
   "Ampicillin/sulbactam": "ampicillin-sulbactam",
   "Piperacillin/tazobactam": "piperacillin-tazobactam",
+  // Cefazolin is NOT split, because there is nothing to split: every cefazolin
+  // column in the 2026 PDF is the urinary one, so there is a single series and
+  // the fix was the label (see antibiotics metadata in build-app-data.mjs). The
+  // plain entry below is vestigial — no page anchors it. If a future PDF adds a
+  // systemic cefazolin column, give it a distinct slug HERE; leaving both
+  // pointing at `cefazolin` would silently merge two determinations.
   "Cefazolin": "cefazolin",
   "Cefazolin (urinary)": "cefazolin",
   "Cefoxitin": "cefoxitin",
@@ -37,7 +47,7 @@ const SLUG = {
   "Levofloxacin": "levofloxacin",
   "Ciprofloxacin": "ciprofloxacin",
   "Nitrofurantoin": "nitrofurantoin",
-  "Nitrofurantoin (urinary)": "nitrofurantoin",
+  "Nitrofurantoin (urinary)": "nitrofurantoin-urinary",
   "# Isolates tested with nitrofurantoin": "_n_nitrofurantoin",
   "# of Isolates": "_isolates",
   "Fluconazole": "fluconazole",

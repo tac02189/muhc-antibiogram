@@ -56,7 +56,7 @@
         "all": {
           "isolateCount": 277,
           "susceptibilities": {
-            "penicillin": null,
+            "penicillin-iv": null,
             "oxacillin": null,
             "ampicillin": 100,
             "erythromycin": null,
@@ -84,7 +84,7 @@
             "tetracycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 99
+            "nitrofurantoin-urinary": 99
           },
           "nitrofurantoinTested": 176
         },
@@ -103,7 +103,7 @@
             "minocycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 40
         },
@@ -123,7 +123,7 @@
             "minocycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -137,7 +137,7 @@
         "all": {
           "isolateCount": 61,
           "susceptibilities": {
-            "penicillin": null,
+            "penicillin-iv": null,
             "oxacillin": null,
             "ampicillin": 19,
             "erythromycin": null,
@@ -166,7 +166,7 @@
             "minocycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 11
+            "nitrofurantoin-urinary": 11
           },
           "nitrofurantoinTested": 9
         }
@@ -180,7 +180,7 @@
         "all": {
           "isolateCount": 389,
           "susceptibilities": {
-            "penicillin": null,
+            "penicillin-iv": null,
             "oxacillin": null,
             "ampicillin": 77,
             "erythromycin": null,
@@ -208,7 +208,7 @@
             "tetracycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 89
+            "nitrofurantoin-urinary": 89
           },
           "nitrofurantoinTested": 213
         },
@@ -228,7 +228,7 @@
             "minocycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -254,7 +254,7 @@
             "minocycline": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 80
+            "nitrofurantoin-urinary": 80
           },
           "nitrofurantoinTested": 56
         }
@@ -293,7 +293,7 @@
             "tmp-smx": 65,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 39
         },
@@ -310,7 +310,7 @@
             "tmp-smx": 86,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 3
         },
@@ -328,7 +328,7 @@
             "tmp-smx": 76,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -342,7 +342,7 @@
         "all": {
           "isolateCount": 491,
           "susceptibilities": {
-            "penicillin": null,
+            "penicillin-iv": null,
             "oxacillin": 100,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -381,7 +381,7 @@
             "tmp-smx": 96,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 36
         },
@@ -408,7 +408,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 6
         },
@@ -436,7 +436,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -450,7 +450,7 @@
         "all": {
           "isolateCount": 568,
           "susceptibilities": {
-            "penicillin": null,
+            "penicillin-iv": null,
             "oxacillin": 38,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -489,7 +489,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": 73,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 54
         },
@@ -516,7 +516,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": 69,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 12
         },
@@ -544,7 +544,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": 44,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -558,7 +558,7 @@
         "all": {
           "isolateCount": 58,
           "susceptibilities": {
-            "penicillin": 100,
+            "penicillin-iv": 100,
             "oxacillin": null,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -597,7 +597,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -611,7 +611,7 @@
         "all": {
           "isolateCount": 48,
           "susceptibilities": {
-            "penicillin": 98,
+            "penicillin-iv": 98,
             "oxacillin": null,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -650,7 +650,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -664,7 +664,7 @@
         "all": {
           "isolateCount": 13,
           "susceptibilities": {
-            "penicillin": 77,
+            "penicillin-iv": 77,
             "oxacillin": null,
             "ampicillin": null,
             "ceftriaxone": 75,
@@ -691,7 +691,7 @@
         "all": {
           "isolateCount": 58,
           "susceptibilities": {
-            "penicillin": 100,
+            "penicillin-iv": 100,
             "oxacillin": null,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -738,7 +738,7 @@
             "tmp-smx": 75,
             "ciprofloxacin": null,
             "levofloxacin": 100,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -752,7 +752,7 @@
         "all": {
           "isolateCount": 36,
           "susceptibilities": {
-            "penicillin": 100,
+            "penicillin-iv": 100,
             "oxacillin": null,
             "ampicillin": null,
             "ceftriaxone": null,
@@ -791,7 +791,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -819,7 +819,7 @@
             "tmp-smx": null,
             "ciprofloxacin": null,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -845,7 +845,7 @@
             "tmp-smx": null,
             "ciprofloxacin": 77,
             "levofloxacin": null,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 35
         },
@@ -864,7 +864,7 @@
             "tmp-smx": null,
             "ciprofloxacin": 76,
             "levofloxacin": null,
-            "nitrofurantoin": 84
+            "nitrofurantoin-urinary": 84
           },
           "nitrofurantoinTested": 38
         }
@@ -892,7 +892,7 @@
             "tmp-smx": null,
             "ciprofloxacin": 97,
             "levofloxacin": null,
-            "nitrofurantoin": 89
+            "nitrofurantoin-urinary": 89
           },
           "nitrofurantoinTested": 27
         }
@@ -918,7 +918,7 @@
             "tmp-smx": 92,
             "ciprofloxacin": 94,
             "levofloxacin": 91,
-            "nitrofurantoin": 39
+            "nitrofurantoin-urinary": 39
           },
           "nitrofurantoinTested": 57
         },
@@ -937,7 +937,7 @@
             "tmp-smx": 87,
             "ciprofloxacin": 92,
             "levofloxacin": 94,
-            "nitrofurantoin": 32
+            "nitrofurantoin-urinary": 32
           },
           "nitrofurantoinTested": 80
         },
@@ -958,7 +958,7 @@
             "tmp-smx": 90,
             "ciprofloxacin": 98,
             "levofloxacin": 93,
-            "nitrofurantoin": 43
+            "nitrofurantoin-urinary": 43
           },
           "nitrofurantoinTested": 7
         },
@@ -978,7 +978,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": 100,
             "levofloxacin": 100,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -1008,7 +1008,7 @@
             "tmp-smx": 75,
             "ciprofloxacin": 74,
             "levofloxacin": 70,
-            "nitrofurantoin": 97
+            "nitrofurantoin-urinary": 97
           },
           "nitrofurantoinTested": 1050
         },
@@ -1030,7 +1030,7 @@
             "tmp-smx": 74,
             "ciprofloxacin": 75,
             "levofloxacin": 67,
-            "nitrofurantoin": 96
+            "nitrofurantoin-urinary": 96
           },
           "nitrofurantoinTested": 1556
         },
@@ -1054,7 +1054,7 @@
             "tmp-smx": 78,
             "ciprofloxacin": 70,
             "levofloxacin": 65,
-            "nitrofurantoin": 98
+            "nitrofurantoin-urinary": 98
           },
           "nitrofurantoinTested": 145
         },
@@ -1077,7 +1077,7 @@
             "tmp-smx": 79,
             "ciprofloxacin": 84,
             "levofloxacin": 74,
-            "nitrofurantoin": 100
+            "nitrofurantoin-urinary": 100
           },
           "nitrofurantoinTested": 33
         }
@@ -1103,7 +1103,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": 91,
             "levofloxacin": null,
-            "nitrofurantoin": 10
+            "nitrofurantoin-urinary": 10
           },
           "nitrofurantoinTested": 21
         },
@@ -1122,7 +1122,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": 98,
             "levofloxacin": null,
-            "nitrofurantoin": 12
+            "nitrofurantoin-urinary": 12
           },
           "nitrofurantoinTested": 34
         },
@@ -1143,7 +1143,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": 95,
             "levofloxacin": 97,
-            "nitrofurantoin": 9
+            "nitrofurantoin-urinary": 9
           },
           "nitrofurantoinTested": 11
         }
@@ -1172,7 +1172,7 @@
             "tmp-smx": 89,
             "ciprofloxacin": 93,
             "levofloxacin": 88,
-            "nitrofurantoin": 86
+            "nitrofurantoin-urinary": 86
           },
           "nitrofurantoinTested": 21
         },
@@ -1193,7 +1193,7 @@
             "tmp-smx": 96,
             "ciprofloxacin": 94,
             "levofloxacin": null,
-            "nitrofurantoin": 85
+            "nitrofurantoin-urinary": 85
           },
           "nitrofurantoinTested": 26
         },
@@ -1215,7 +1215,7 @@
             "tmp-smx": 92,
             "ciprofloxacin": 92,
             "levofloxacin": 91,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -1244,7 +1244,7 @@
             "tmp-smx": 79,
             "ciprofloxacin": 77,
             "levofloxacin": 76,
-            "nitrofurantoin": 28
+            "nitrofurantoin-urinary": 28
           },
           "nitrofurantoinTested": 228
         },
@@ -1265,7 +1265,7 @@
             "tmp-smx": 81,
             "ciprofloxacin": 80,
             "levofloxacin": 70,
-            "nitrofurantoin": 26
+            "nitrofurantoin-urinary": 26
           },
           "nitrofurantoinTested": 295
         },
@@ -1288,7 +1288,7 @@
             "tmp-smx": 79,
             "ciprofloxacin": 82,
             "levofloxacin": 78,
-            "nitrofurantoin": 27
+            "nitrofurantoin-urinary": 27
           },
           "nitrofurantoinTested": 51
         },
@@ -1310,7 +1310,7 @@
             "tmp-smx": 95,
             "ciprofloxacin": 100,
             "levofloxacin": 100,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -1404,7 +1404,7 @@
             "tobramycin": null,
             "ciprofloxacin": 85,
             "levofloxacin": 81,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -1419,7 +1419,7 @@
             "tobramycin": null,
             "ciprofloxacin": 86,
             "levofloxacin": 79,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -1436,7 +1436,7 @@
             "minocycline": null,
             "ciprofloxacin": 84,
             "levofloxacin": 81,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -1451,7 +1451,7 @@
             "tobramycin": null,
             "ciprofloxacin": 100,
             "levofloxacin": 88,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -1480,7 +1480,7 @@
             "tmp-smx": 90,
             "ciprofloxacin": 96,
             "levofloxacin": null,
-            "nitrofurantoin": 85
+            "nitrofurantoin-urinary": 85
           },
           "nitrofurantoinTested": 26
         }
@@ -1508,7 +1508,7 @@
             "tmp-smx": 94,
             "ciprofloxacin": 93,
             "levofloxacin": null,
-            "nitrofurantoin": 84
+            "nitrofurantoin-urinary": 84
           },
           "nitrofurantoinTested": 38
         },
@@ -1531,7 +1531,7 @@
             "tmp-smx": 82,
             "ciprofloxacin": 100,
             "levofloxacin": null,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }
@@ -1615,7 +1615,7 @@
             "tmp-smx": 91,
             "ciprofloxacin": null,
             "levofloxacin": 91,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -1628,7 +1628,7 @@
             "tmp-smx": 87,
             "ciprofloxacin": null,
             "levofloxacin": 90,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         },
@@ -1641,7 +1641,7 @@
             "tmp-smx": 100,
             "ciprofloxacin": null,
             "levofloxacin": 82,
-            "nitrofurantoin": null
+            "nitrofurantoin-urinary": null
           },
           "nitrofurantoinTested": null
         }

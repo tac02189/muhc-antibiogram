@@ -111,13 +111,30 @@ const organisms = [...organismMap.values()].sort((a, b) => {
 // Classes used for grouping in the UI. Routes affect dosing decisions.
 const antibiotics = {
   penicillin: { name: "Penicillin", class: "penicillin", routes: ["IV", "PO"] },
+  // The PDF reports penicillin under two different headers and they are kept
+  // separate on purpose (Thiago, 2026-10-03): "Penicillin (IV)" on the
+  // all-locations gram-positive table, plain "Penicillin" on the ED/ICU/Peds
+  // tables. Merging them under one row made the audience filter silently
+  // change which determination a number came from, under an identical label.
+  "penicillin-iv": { name: "Penicillin (IV)", class: "penicillin", routes: ["IV"], notes: "Reported as a separate IV column on the all-locations gram-positive panel." },
   oxacillin: { name: "Oxacillin", class: "penicillin", routes: ["IV"], notes: "Susceptibility implies cefazolin & cephalexin susceptibility." },
   ampicillin: { name: "Ampicillin", class: "penicillin", routes: ["IV", "PO"] },
   "ampicillin-sulbactam": { name: "Ampicillin/sulbactam", class: "beta-lactam/inhibitor", routes: ["IV"] },
   "piperacillin-tazobactam": { name: "Piperacillin/tazobactam", class: "beta-lactam/inhibitor", routes: ["IV"], notes: "Avoid for HECK-Yes organisms (inducible AmpC)." },
-  cefazolin: { name: "Cefazolin", class: "1st-gen cephalosporin", routes: ["IV"], notes: "Urinary isolates only on the panel." },
+  // The qualifier belongs in the NAME, not only in notes. Every cefazolin
+  // column in the PDF is labelled "(urinary isolates only)" — there is no
+  // plain/systemic cefazolin column anywhere in the document — and the urinary
+  // breakpoint is more permissive than the systemic one. With the qualifier
+  // living only in `notes`, the UI surfaced it as a hover-tooltip icon, which
+  // is effectively invisible on the phone this tool is built for, so the number
+  // read as systemic susceptibility. If a future PDF adds a systemic cefazolin
+  // column, give it its own slug rather than widening this one.
+  cefazolin: { name: "Cefazolin (urinary isolates)", class: "1st-gen cephalosporin", routes: ["IV"], notes: "Urinary breakpoint. The panel has no systemic cefazolin column — do not read this as systemic susceptibility." },
   cefoxitin: { name: "Cefoxitin", class: "2nd-gen cephalosporin (cephamycin)", routes: ["IV"] },
-  ceftriaxone: { name: "Ceftriaxone (= cefotaxime)", class: "3rd-gen cephalosporin", routes: ["IV"] },
+  // Named as the PDF prints the column header (Thiago, 2026-10-03). One
+  // combined column covers both agents; the previous "Ceftriaxone (= cefotaxime)"
+  // led with one of the two.
+  ceftriaxone: { name: "Cefotaxime/ceftriaxone", class: "3rd-gen cephalosporin", routes: ["IV"] },
   ceftazidime: { name: "Ceftazidime", class: "3rd-gen cephalosporin (anti-pseudo)", routes: ["IV"] },
   cefepime: { name: "Cefepime", class: "4th-gen cephalosporin", routes: ["IV"] },
   meropenem: { name: "Meropenem", class: "carbapenem", routes: ["IV"] },
@@ -135,7 +152,13 @@ const antibiotics = {
   "tmp-smx": { name: "TMP-SMX (Bactrim)", class: "sulfonamide", routes: ["IV", "PO"] },
   levofloxacin: { name: "Levofloxacin", class: "fluoroquinolone", routes: ["IV", "PO"] },
   ciprofloxacin: { name: "Ciprofloxacin", class: "fluoroquinolone", routes: ["IV", "PO"] },
-  nitrofurantoin: { name: "Nitrofurantoin", class: "nitrofuran", routes: ["PO"], notes: "Urinary tract only — no systemic activity." },
+  // Two separate PDF columns, kept separate on purpose (Thiago, 2026-10-03):
+  // plain "Nitrofurantoin" on the all-locations gram-positive table, and
+  // "Nitrofurantoin (urinary isolates only)" on the gram-negative and
+  // ED/ICU/Peds tables. The urinary series is the one the UTI syndrome cards
+  // mean, so their cross-links point at `nitrofurantoin-urinary`.
+  nitrofurantoin: { name: "Nitrofurantoin", class: "nitrofuran", routes: ["PO"], notes: "Urinary tract only — no systemic activity. Reported as a plain column on the all-locations gram-positive panel." },
+  "nitrofurantoin-urinary": { name: "Nitrofurantoin (urinary isolates)", class: "nitrofuran", routes: ["PO"], notes: "Urinary tract only — no systemic activity. Urinary-isolate column on the gram-negative and ED/ICU/Peds panels." },
   fluconazole: { name: "Fluconazole", class: "azole antifungal", routes: ["IV", "PO"] },
   voriconazole: { name: "Voriconazole", class: "azole antifungal", routes: ["IV", "PO"] },
   caspofungin: { name: "Caspofungin", class: "echinocandin", routes: ["IV"], notes: "NOT for CNS or urinary infections." },
@@ -201,7 +224,7 @@ const syndromes = [
     icon: "droplet",
     context: "Otherwise healthy outpatient, no recent abx, no urologic abnormalities. Female non-pregnant.",
     firstLine: [
-      { drug: "nitrofurantoin", dose: "100 mg PO BID × 5 d", rationale: "Local E. coli susceptibility ~97%. Excellent urinary concentration." },
+      { drug: "nitrofurantoin-urinary", dose: "100 mg PO BID × 5 d", rationale: "Local E. coli susceptibility ~97%. Excellent urinary concentration." },
       { drug: "tmp-smx", dose: "1 DS PO BID × 3 d", rationale: "Local E. coli susceptibility ~75%. Avoid if local resistance > 20% or recent TMP-SMX use." },
     ],
     alternatives: [
@@ -229,7 +252,7 @@ const syndromes = [
     ],
     avoid: [
       { drug: "ampicillin-sulbactam", reason: "Local E. coli susceptibility ~63–65% — borderline coverage for empiric." },
-      { drug: "nitrofurantoin", reason: "Does NOT achieve adequate tissue levels — urinary tract concentration only. Don't use for pyelo." },
+      { drug: "nitrofurantoin-urinary", reason: "Does NOT achieve adequate tissue levels — urinary tract concentration only. Don't use for pyelo." },
     ],
     duration: "5–7 days (depending on agent — see Shorter Is Better)",
     notes: "If patient has had recent abx, ESBL history, or healthcare exposure — consider cefepime or carbapenem and consult ID.",

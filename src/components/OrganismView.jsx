@@ -126,13 +126,29 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   const gram = GRAM_LABEL[organism.gramStain] || GRAM_LABEL.unknown;
   const lowN = d.isolateCount != null && d.isolateCount < isolateMinimum;
 
-  // Sort drugs: tested first (descending %S), then null at bottom
+  // Sort drugs: tested first (descending %S), then null at bottom.
+  //
+  // Drugs on the all-locations panel but NOT on the selected setting's panel
+  // are included, carrying their all-locations value and flagged `fromAll`.
+  // Some columns the PDF only prints on the all-locations tables (the IV
+  // penicillin and plain nitrofurantoin columns — see CLAUDE.md "Qualified
+  // drug columns"), so without this they vanish entirely when the reader
+  // switches to ED/ICU/Peds and look like missing data. The flag is rendered
+  // as a visible badge, never a tooltip: the number is NOT specific to the
+  // selected setting and must not be read as though it were.
   const drugs = useMemo(() => {
-    return Object.entries(d.susceptibilities)
-      .map(([slug, value]) => ({
-        slug,
-        value,
-        meta: antibiotics[slug] || { name: slug, class: "other", routes: [] },
+    const own = d.susceptibilities || {};
+    const allPanel = (audience !== "all" && organism.data?.all?.susceptibilities) || {};
+    const rows = Object.entries(own).map(([slug, value]) => ({ slug, value, fromAll: false }));
+    for (const [slug, value] of Object.entries(allPanel)) {
+      if (own[slug] === undefined && value != null) {
+        rows.push({ slug, value, fromAll: true });
+      }
+    }
+    return rows
+      .map((r) => ({
+        ...r,
+        meta: antibiotics[r.slug] || { name: r.slug, class: "other", routes: [] },
       }))
       .sort((a, b) => {
         if (a.value == null && b.value == null) return a.meta.name.localeCompare(b.meta.name);
@@ -140,7 +156,7 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
         if (b.value == null) return -1;
         return b.value - a.value;
       });
-  }, [d, antibiotics]);
+  }, [d, antibiotics, audience, organism]);
 
   const tested = drugs.filter((dr) => dr.value != null);
   const untested = drugs.filter((dr) => dr.value == null);
@@ -192,10 +208,25 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                     <li key={dr.slug} className="flex items-center gap-3 py-1">
                       <SusceptibilityChip value={dr.value} size="md" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-stone-900 truncate">{dr.meta.name}</div>
+                        <div className="text-sm font-medium text-stone-900 flex items-center gap-1.5">
+                          <span className="truncate">{dr.meta.name}</span>
+                          {dr.fromAll && (
+                            // Visible text, not a tooltip: this number is from
+                            // the all-locations panel, not the selected setting.
+                            <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+                              all locations
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[11px] text-stone-500">
                           {dr.meta.class}
                           {dr.meta.routes?.length ? ` · ${dr.meta.routes.join("/")}` : ""}
+                          {dr.fromAll && (
+                            <span className="text-stone-600">
+                              {" · not specific to "}
+                              {audienceInfo.short}
+                            </span>
+                          )}
                         </div>
                       </div>
                       {dr.meta.notes && (

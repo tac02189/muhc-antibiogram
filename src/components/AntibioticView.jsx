@@ -101,14 +101,30 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
     for (const o of organisms) {
       const d = o.data[audience];
       if (!d) continue;
-      const v = d.susceptibilities?.[slug];
-      if (v === undefined) continue; // drug not on this audience's panel
+      let v = d.susceptibilities?.[slug];
+      let n = d.isolateCount;
+      let fromAll = false;
+      if (v === undefined) {
+        // Not on the selected setting's panel. Some columns the PDF prints
+        // only on the all-locations tables (see CLAUDE.md "Qualified drug
+        // columns"), so falling through here made the drug look untested
+        // everywhere. Fall back to the all-locations figure and mark it —
+        // it is NOT specific to the selected setting.
+        if (audience === "all") continue;
+        const allData = o.data?.all;
+        const allV = allData?.susceptibilities?.[slug];
+        if (allV === undefined || allV === null) continue;
+        v = allV;
+        n = allData.isolateCount;
+        fromAll = true;
+      }
       out.push({
         id: o.id,
         name: o.name,
         gramStain: o.gramStain,
-        n: d.isolateCount,
+        n,
         value: v,
+        fromAll,
       });
     }
     // Sort: tested high→low, then untested alphabetic
@@ -147,6 +163,16 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
             <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-500 mb-2">
               Organisms covered · {audienceInfo.short} · sorted high → low
             </div>
+            {tested.some((r) => r.fromAll) && (
+              <p className="mb-2 text-[11px] leading-snug text-stone-600 bg-stone-100 border border-stone-200 rounded px-2 py-1.5">
+                {tested.every((r) => r.fromAll) ? "This drug is not on the " : "Some rows are not on the "}
+                {audienceInfo.short} panel. Rows marked{" "}
+                <span className="text-[9px] font-bold uppercase tracking-wide px-1 py-px rounded bg-stone-200 text-stone-600">
+                  all locations
+                </span>{" "}
+                show the all-locations figure instead — not specific to {audienceInfo.short}.
+              </p>
+            )}
             {tested.length === 0 ? (
               <p className="text-sm text-stone-500 py-4 text-center">
                 Not on the panel for this setting.
@@ -167,6 +193,13 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                           </span>
                           <span>n = {r.n ?? "?"}</span>
                           {lowN && <span className="text-amber-600">low n</span>}
+                          {r.fromAll && (
+                            // Visible text, not a tooltip: this figure comes
+                            // from the all-locations panel, not the setting.
+                            <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+                              all locations
+                            </span>
+                          )}
                         </div>
                       </div>
                     </li>

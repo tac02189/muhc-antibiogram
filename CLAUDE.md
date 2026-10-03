@@ -18,6 +18,10 @@ This is a **reference tool, not bedside decision support** — it reports measur
 
 Everything else in the app derives mechanically from the source PDF. This file is the exception that needs a human.
 
+**`node _extraction/syndrome-brief.mjs` is the review aid for that human.** For each card it prints the draft first-line / alternatives / avoid agents with the local %S for each cited drug against each of that card's `relevantOrganisms`, across all four audiences, plus a "what the local data shows" ranking of every drug on panel for those organisms. `--md` emits markdown. It recommends nothing — it only turns the review from a research task into confirm-or-override.
+
+Two things it does that are worth keeping: it flags `!` on any organism below the CLSI isolate threshold, and where a draft rationale *quotes* a susceptibility percentage it prints the figures actually in the data beside it as a `CHECK` line. That check deliberately ignores numbers in a resistance or threshold context ("avoid if local resistance > 20%" is a rule, not a claim about this drug's %S) — it false-alarmed on exactly that before the filter was added. And its "best first" ranking sorts on the **all-locations** figure, not the max across audiences: ranking by max let a single low-n Peds 100% hoist a mediocre drug above meropenem, which is backwards in a list a clinician scans top-down.
+
 ## Stack
 
 - **React 18** + **Vite 5** — single-page, no router; four tabs are local state in `App.jsx`
@@ -58,6 +62,16 @@ Verified after the split: **no row carries both halves of either pair** — the 
 **Cefazolin is deliberately NOT split, because there is nothing to split.** Every cefazolin column in the 2026 PDF is the urinary one; there is no systemic column anywhere in the document. The defect there was labelling: the qualifier lived only in `notes`, which the UI renders as a hover-tooltip icon — effectively invisible on the phone this tool targets — so a bare "Cefazolin 88%" read as systemic susceptibility against a more permissive urinary breakpoint. The qualifier is now in the **name** (`Cefazolin (urinary isolates)`). If a future PDF adds a systemic column, give it its own slug; do not widen `cefazolin`.
 
 **Two syndrome cross-links moved with the split** (`nitrofurantoin` → `nitrofurantoin-urinary`, in the uncomplicated-UTI first-line and the pyelo `avoid` entry). Only the `drug` slug changed — no dose, rationale or recommendation was touched. Both cards are about *E. coli* UTI, so the urinary series is the one they mean, and leaving them on the plain slug would have pointed them at gram-positive-only data that does not exist for 3 of the 4 audiences.
+
+### All-locations fallback — a drug off the selected panel still shows, labelled
+
+The split had a visible side effect: because the PDF prints the IV-penicillin and plain-nitrofurantoin columns *only* on the all-locations tables, those drugs vanished entirely when the reader switched to ED/ICU/Peds, which reads as missing data rather than as "not on that panel". Thiago's call (2026-10-03): **show the all-locations figure, but say plainly that it is not setting-specific.**
+
+Both detail views now fall back. `OrganismView` adds drugs that are on the all-locations panel but not the selected one; `AntibioticView` falls back per organism row and, when any row is a fallback, prints a banner above the list. Fallback rows carry an **`all locations` badge plus a "not specific to ⟨setting⟩" subtitle**.
+
+⚠️ **The marker is visible text, deliberately — never a tooltip.** This is the same mistake the cefazolin qualifier made: a `title=` tooltip is effectively invisible on the phone this tool is built for, and an unlabelled all-locations number read as setting-specific is exactly the misreading the fallback must not cause. Two independent cues (badge + subtitle) because one can be truncated.
+
+Fallback never applies when the selected audience *is* `all`, and never invents a value: a drug absent from both panels stays absent. Verified against the JSON — the displayed figures and isolate counts come from the all-locations panel (e.g. ED + Penicillin (IV): GBS 100% n=58, GAS 100% n=36, *S. anginosus* 98% n=48, all matching `data.all` while `data.ed` is genuinely undefined).
 
 ### The PDF viewer — four deliberate decisions, none of them accidental
 
@@ -154,7 +168,7 @@ Six traps are already handled — do not "simplify" them away:
 
 **Known limitations — real, and not fixed:**
 
-- **The canonical drug-name map is unvalidated.** Parser and verifier both read `parse-v2.mjs`'s `SLUG`, so swapping two slugs there and regenerating would satisfy every check (Codex F7). Confirming drug identity needs a human reading the PDF's headers — **`node drug-map-report.mjs`** lays the two ends side by side (PDF header label → slug → the name the app displays, aliases grouped, 35 labels → 32 drugs) so that review is a short eyeball rather than archaeology. It asserts nothing; it only makes the comparison cheap. Underscore-prefixed slugs (`_isolates`, `_n_nitrofurantoin`) are bookkeeping columns, not drugs, and are labelled as such — they are *expected* to have no `antibiotics.json` entry.
+- **The canonical drug-name map is unvalidated.** Parser and verifier both read `parse-v2.mjs`'s `SLUG`, so swapping two slugs there and regenerating would satisfy every check (Codex F7). Confirming drug identity needs a human reading the PDF's headers — **`node drug-map-report.mjs`** lays the two ends side by side (PDF header label → slug → the name the app displays, aliases grouped, 35 labels → 34 drugs) so that review is a short eyeball rather than archaeology. It asserts nothing; it only makes the comparison cheap. Underscore-prefixed slugs (`_isolates`, `_n_nitrofurantoin`) are bookkeeping columns, not drugs, and are labelled as such — they are *expected* to have no `antibiotics.json` entry.
 - **Literal slicing is textual.** `PAGE_TABLES` and `SLUG` are sliced out of the parser source by brace matching. A duplicate declaration now throws, but a brace inside a string or comment could still mis-slice (F12).
 - It cannot tell you the PDF's own numbers are right. That is step 5, and it is not optional.
 

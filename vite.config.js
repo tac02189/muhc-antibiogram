@@ -77,7 +77,16 @@ export default defineConfig({
         //
         // Anything with a file extension, plus the hashed asset directory, is
         // therefore excluded from the shell fallback and left to the network.
-        navigateFallbackDenylist: [/\/assets\//, /\.[a-zA-Z0-9]{2,5}$/],
+        //
+        // The pattern is "a literal dot anywhere before the query", NOT an
+        // end-anchored extension. Peer review 2026-10-03 found the previous
+        // `/\.[a-zA-Z0-9]{2,5}$/` wrong in two ways, because Workbox tests this
+        // against `pathname + search`, not the pathname alone:
+        //   - `.webmanifest` is 11 characters, so {2,5} could never match it;
+        //   - any query defeated the `$` anchor, so
+        //     /MUHC-UH-Antibiogram-2026.pdf?download=1 fell through to the
+        //     shell and returned HTML where the reader asked for the PDF.
+        navigateFallbackDenylist: [/\/assets\//, /^[^?]*\./],
 
         runtimeCaching: [
           {

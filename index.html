@@ -7,14 +7,19 @@
     <title>MUHC Antibiogram 2026</title>
     <meta name="description" content="MUHC University Hospital 2026 Antibiogram — interactive susceptibility lookup for emergency physicians, hospitalists, and clinical staff. Mobile-first." />
 
-    <!-- Icons -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="icon-32-v3.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192-v3.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512-v3.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180-v3.png" />
-    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="icon-180-v3.png" />
-    <link rel="manifest" href="manifest.webmanifest" />
+    <!-- Icons. %BASE_URL% (Vite substitutes the build's base) keeps these
+         base-relative rather than document-relative: a document served at a
+         deep path — anything the retired gh-pages branch forwards, which the
+         SPA rewrite answers with this shell — would otherwise resolve
+         "manifest.webmanifest" against that path and 404 the manifest and
+         every icon. Filenames stay -v3-suffixed; see CLAUDE.md "App icons". -->
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%icon-32-v3.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="%BASE_URL%icon-192-v3.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="%BASE_URL%icon-512-v3.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%icon-180-v3.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="%BASE_URL%icon-180-v3.png" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
     <meta name="apple-mobile-web-app-title" content="Antibiogram" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

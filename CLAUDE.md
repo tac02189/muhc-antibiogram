@@ -179,19 +179,46 @@ This feature was reviewed by Codex (gpt-6-astra) on 2026-10-01 against exactly t
 | **F2** controller guard froze | `const hadController = Boolean(controller)` evaluated once. On a first-ever visit it is `false` **forever**, so every later update to that still-open tab was ignored — the exact staleness the reload exists to prevent. | Tracks the transition: only the first claim is swallowed, every subsequent controller change reloads. |
 | **F3** no bounded freshness | Nothing checked for updates after load. A phone resuming an installed app fires no `load`, so a backgrounded copy could stay on an old release indefinitely. | `registration.update()` on load, on `online`, and on becoming visible. (`register()` again is *not* a substitute — Chromium and WebKit can both reuse an identical registration without re-fetching.) |
 | **F9** PDF range requests | The SW returns the precached PDF as a complete response with no range handling, while pdf.js may issue a Range request and accept a `200` as though it were the range — corrupting offsets. | `disableRange: true` in `PdfCanvas.jsx`. The document is 840 KB and fully cached; ranged fetching bought nothing. |
-| **F10** fallback masked real files | Any unmatched in-scope navigation returned the app shell — navigating to `/og-image-v3.png` served HTML instead of the image. | `navigateFallbackDenylist` excludes `/assets/` and anything with a file extension. Verified: that URL now returns `image/png`. |
+| **F10** fallback masked real files | Any unmatched in-scope navigation returned the app shell — navigating to `/og-image-v3.png` served HTML instead of the image. | `navigateFallbackDenylist` excludes `/assets/` and any path with a dot before the query. Verified: that URL returns `image/png`. **The first version of this fix was itself wrong — see below.** |
+
+⚠️ **F10's original pattern was `/\.[a-zA-Z0-9]{2,5}$/` and it was broken two ways** (caught on re-review 2026-10-03). Workbox tests the denylist against **`pathname + search`**, not the pathname:
+
+- `.webmanifest` is 11 characters, so `{2,5}` could never match it;
+- any query string defeated the `$` anchor, so `/MUHC-UH-Antibiogram-2026.pdf?download=1` fell through to the shell and returned **HTML where the reader asked for the PDF**.
+
+Now `/^[^?]*\./` — "a literal dot anywhere before the query". The lesson generalizes: an end-anchored extension test is wrong for Workbox navigation routes, because the string being tested carries the query.
+
+**Also fixed in the same pass:** `index.html`'s icon and manifest refs were document-relative (`href="manifest.webmanifest"`), so a document served at a deep path resolved them *against that path* and 404'd the manifest and every icon. They now use Vite's `%BASE_URL%`, which keeps them base-relative while still producing `/muhc-antibiogram/…` for the dev server. Verified in both builds' emitted HTML.
 | **F11** reload changed the population | The forced reload reset the audience filter to **All**, silently moving the reader off ICU/ED/Peds mid-lookup. | The selected audience is carried across an update reload only (session handoff, read once and cleared), so a manual reload still starts at the default. |
 | **F13** wrong comment | A comment claimed an oversize asset is dropped from the precache "with no error". | It actually **fails the build** — vite-plugin-pwa turns the size warning into a throw. Comment corrected. |
 
-**⚠️ Still open — needs a decision, not a patch (Codex F1, rated High).** `firebase.json`'s catch-all rewrite (`"source": "**"` → `/index.html`) means a request for a *missing* asset returns `index.html` with HTTP 200. Workbox accepts any sub-400 response into the precache without checking MIME type, so if an asset fetch during install races a deploy that removed that file, **HTML can be cached under a JavaScript URL** — and the app then loads blank on every subsequent launch, because it never reaches `main.jsx` and so cannot self-recover. Ordinary reloads reuse the poisoned entry; restoring the file on the server does not overwrite a cache hit.
+### F1 — fixed 2026-10-03, and the "unavoidable tradeoff" was not one
 
-The fix is to stop the rewrite answering for asset-shaped paths, but it is a live-hosting change with a real tradeoff and it was deliberately **not** made unilaterally:
+**The rewrite is now `{ "regex": "^/[^.]*$", "destination": "/index.html" }`.** A missing asset-shaped path (anything containing a dot) 404s instead of being answered with the app shell. That closes the poisoning route: Workbox precaches any sub-400 response **without checking MIME type**, so while the catch-all stood, an asset fetch during service-worker install that raced a deploy could cache HTML under a `.js` URL.
 
-- Firebase's `regex` rewrites use RE2, which has **no lookahead**, so the usual `^(?!...)` exclusion pattern does not work.
-- The app has no router, so `/` is the only navigation it actually needs — the catch-all could in principle go entirely.
-- But the retired `gh-pages` branch forwards deep links (`/muhc-antibiogram/foo` → `/foo`), and those would then 404 instead of loading the app. That forwarding is the reason the catch-all is earning its keep.
+This file previously recorded F1 as an open decision, on the reasoning that Firebase's `regex` uses RE2, RE2 has no lookahead, so `^(?!...)` exclusion was impossible — therefore narrowing the rewrite had to trade cache-poisoning robustness against the deep links the retired `gh-pages` branch forwards. **The premise was true and the conclusion was wrong.** No lookahead is needed: a negated character class states the same policy positively. Codex agreed on re-review ("'No lookahead, therefore unavoidable tradeoff' was incorrect for this dot-exclusion policy").
 
-So: narrowing it trades cache-poisoning robustness against old bookmarked deep links resolving. Decide which matters more before changing it.
+**Verified live after deploy, not reasoned:**
+
+| Request | Before | After |
+|---|---|---|
+| `/assets/index-DOESNOTEXIST.js`, `/assets/missing.mjs`, `/assets/missing.css` | 200 `text/html` | **404** |
+| `/missing.pdf`, `/old-page.html`, `/v1.2/foo` | 200 `text/html` | **404** |
+| `/`, `/foo`, `/foo/bar`, `/foo/`, `/foo/bar/` | 200 shell | 200 shell — **deep links preserved** |
+| real files (hashed JS, `sw.js`, `manifest.webmanifest`, `favicon.svg`, the PDF, `og-image-v3.png`) | correct | correct MIME, unchanged |
+
+Note the policy is "a dot **anywhere** in the path", not "a file extension". A dotted deep link such as `/v1.2/foo` now 404s. That is accepted: the app has never had a router, so no such path was ever real.
+
+**Two limits of this fix, both measured — do not mistake them for regressions:**
+
+- **It prevents new poisoning; it does not repair a cache already poisoned.** In practice a later deploy largely self-heals, because every asset is content-hashed: a new build references new URLs, so a poisoned entry sits in an outdated cache and `cleanupOutdatedCaches()` drops it. An earlier version of this file said the app "cannot self-recover" — too absolute, per Codex: `registerSW.js` registers independently of `main.jsx`, so a later release can recover a blank install.
+- **`/assets/<dotless>` still gets the shell, and it gets the immutable header.** Measured: `/assets/foo` returns 200 HTML with `public, max-age=31536000, immutable`. Excluding the `/assets` namespace in RE2 without lookahead means enumerating the prefix character by character, which is unreadable and easy to get wrong; and no precached asset is extension-less, so this is not a poisoning route for any build this app produces. Left as-is deliberately, with the measurement recorded so the next session need not re-derive it.
+
+### ⚠️ Still open — the first-claim race (Codex, Medium, pre-existing)
+
+`src/main.jsx` deliberately swallows the **first** `controllerchange` ("reloading here would be a pointless extra load on every first visit" — that is the F2 fix). Codex found a window this leaves: an uncontrolled page loads release A → release B deploys before A's worker finishes installing → worker B claims the still-running A page → the first claim is ignored → **the reader keeps seeing A's susceptibility data** until a navigation or a later update.
+
+This was **not** changed, and the reason is worth keeping: every cheap fix is worse than the bug. Always reloading on the first claim reintroduces exactly what F2 removed (an extra load for every new install, and the loop risk that motivated the guard); a time-based heuristic is guesswork. The clean fix is what Codex suggests — compare a release identifier carried in the page against the worker's — and that is a small feature with its own review, not a cleanup. Decide it deliberately.
 
 
 ## App icons

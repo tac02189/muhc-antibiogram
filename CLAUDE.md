@@ -137,7 +137,7 @@ Six traps are already handled — do not "simplify" them away:
 
 **Known limitations — real, and not fixed:**
 
-- **The canonical drug-name map is unvalidated.** Parser and verifier both read `parse-v2.mjs`'s `SLUG`, so swapping two slugs there and regenerating would satisfy every check (Codex F7). Confirming drug identity needs a human reading the PDF's headers.
+- **The canonical drug-name map is unvalidated.** Parser and verifier both read `parse-v2.mjs`'s `SLUG`, so swapping two slugs there and regenerating would satisfy every check (Codex F7). Confirming drug identity needs a human reading the PDF's headers — **`node drug-map-report.mjs`** lays the two ends side by side (PDF header label → slug → the name the app displays, aliases grouped, 35 labels → 32 drugs) so that review is a short eyeball rather than archaeology. It asserts nothing; it only makes the comparison cheap. Underscore-prefixed slugs (`_isolates`, `_n_nitrofurantoin`) are bookkeeping columns, not drugs, and are labelled as such — they are *expected* to have no `antibiotics.json` entry.
 - **Literal slicing is textual.** `PAGE_TABLES` and `SLUG` are sliced out of the parser source by brace matching. A duplicate declaration now throws, but a brace inside a string or comment could still mis-slice (F12).
 - It cannot tell you the PDF's own numbers are right. That is step 5, and it is not optional.
 

@@ -12,7 +12,7 @@ This is a **reference tool, not bedside decision support** — it reports measur
 
 `src/data/syndromes.json` holds 6 syndrome cards (uncomplicated UTI, complicated UTI/pyelo, CAP, HAP/VAP, SSTI, intra-abdominal). They were **scaffolded from the local antibiogram plus standard IDSA guidance — they are not Thiago's clinical recommendations, and no clinician has reviewed them.**
 
-- **Untouched since the initial commit `60e304b`.** If that is still true, the review has not happened.
+- **No clinician has reviewed the cards.** The only change since the initial commit `60e304b` is the 2026-10-03 slug rename (`nitrofurantoin` → `nitrofurantoin-urinary`, see *Qualified drug columns*); no agent, dose or rationale has changed. Treat the review as not having happened until Thiago records a sign-off date here.
 - `SyndromeView.jsx` renders a visible **"Draft recommendations — pending clinical review"** banner. **Do not remove that banner** until Thiago says the cards are reviewed.
 - Editing them is a *clinical* change: schema is stable, so it is only the `firstLine` / `alternatives` / `avoid` arrays — but a wrong empiric regimen here reaches a prescriber. Never edit them on your own initiative, and never let a passing Codex/Gemini review stand in for clinical verification (root `CLAUDE.md`, *Clinical content gets flagged, not judged*).
 
@@ -84,7 +84,7 @@ Fallback never applies when the selected audience *is* `all`, and never invents 
 | **pdf.js canvases, never an `<iframe>`** | iOS Safari's native inline PDF viewer renders **only page 1** of a multi-page doc with locked zoom. An iframe looks fine on desktop and is broken on the target device. |
 | **`PdfViewer` (shell) is eager; `PdfCanvas` is `React.lazy`** | The shell owns the Back button, scroll lock and focus trap, so they exist instantly and still work if the heavy chunk never loads. Merging them back would put the close button behind the failure it needs to survive. |
 | **`PdfErrorBoundary` wraps the lazy chunk** | `Suspense` catches a *pending* import, not a *rejected* one. After a redeploy an open PWA requests a stale chunk hash; without the boundary that rejection blanks the **whole app**, not just the PDF. |
-| **Page windowing uses `scroll` events + cumulative heights, not `IntersectionObserver`** | Deliberate. IO is the "modern" choice and was tried first; it cannot be verified in this harness (see *Preview pane* below), and a silently non-firing observer renders blank pages past the seed — worse than the memory problem it solves. Caps live canvases at ~6 of 13. |
+| **Page windowing uses `scroll` events + cumulative heights, not `IntersectionObserver`** | Deliberate. IO is the "modern" choice and was tried first; it could not be verified while the tab was hidden (see *Preview pane* below), and a silently non-firing observer renders blank pages past the seed — worse than the memory problem it solves. Caps live canvases at ~6 of 13. |
 
 Browser history for the overlay lives in **`App.jsx`, keyed on `[pdfOpen]`** — not inside the viewer. Keying it on a component lifecycle made cleanup fire `history.back()` against a changing callback identity, which double-popped under StrictMode. Leave it where it is.
 
@@ -125,17 +125,13 @@ npm run dev
 
 ### Preview pane limits worth knowing before you debug
 
-The harness's browser pane runs hidden, and three things silently do not work in it — each one has cost a session real time:
-
-- **Screenshots fail** ("not compositing frames").
-- **`IntersectionObserver` never fires** — no frame pipeline. This is why page windowing uses scroll events.
-- **Programmatic `scrollTop` does not emit a `scroll` event.** To drive scroll-dependent code, set `scrollTop` then `dispatchEvent(new Event('scroll'))`.
+The pane's tab runs hidden unless you front it (`tabs_select`). While hidden: screenshots fail ("not compositing frames"), `IntersectionObserver` never fires, and programmatic `scrollTop` emits no `scroll` event (set it, then `dispatchEvent(new Event('scroll'))`). Front the tab before concluding a feature is broken. The scroll-event page windowing (above) shipped under these conditions and is kept as is.
 
 Also: editing a hook's **hook count** while the dev server is live throws React "Rendered more hooks than during the previous render". That is an HMR artifact, not a real bug — full-reload before believing it.
 
 ## Annual update — when the 2027 PDF drops
 
-1. **Replace the PDF in `public/`, deleting last year's** — the pipeline now globs for exactly one PDF there and refuses to run on zero or two, so leaving both stops the extraction instead of silently picking one. Then update the filename in **both** places it is hardcoded: `PDF_HREF` (`src/App.jsx:20`) and the `download` attribute (`src/components/PdfViewer.jsx:159`). Missing the second one serves the new PDF under last year's filename.
+1. **Replace the PDF in `public/`, deleting last year's** — the pipeline now globs for exactly one PDF there and refuses to run on zero or two, so leaving both stops the extraction instead of silently picking one. Then update the filename in **both** places it is hardcoded: the `PDF_HREF` constant in `src/App.jsx` and the `download` attribute on the Download link in `src/components/PdfViewer.jsx`. Missing the second one serves the new PDF under last year's filename.
 2. Update the hardcoded per-page column X-coordinates in `_extraction/parse-v2.mjs` if the table layout changed.
 3. `cd _extraction && node extract.mjs && node parse-v2.mjs && node build-app-data.mjs`
 4. **`node verify-data.mjs`** — must print PASS. It refuses to run unless the intermediates were extracted from the PDF now sitting in `public/` (SHA-256, recorded in `source.json`), then checks every column anchor against the header the PDF prints at that x, matches all 75 printed data rows one-to-one against JSON organisms, and compares every cell in both directions. Exits 1 on any disagreement.
@@ -177,7 +173,7 @@ Six traps are already handled — do not "simplify" them away:
 **Self-test.** `ANTIBIOGRAM_JSON=<path>` points it at a different file, so you can corrupt a copy and confirm it still fails. A check that cannot fail is worth nothing, and a passing run looks identical either way.
 
 
-**`_extraction/` layout:** `extract.mjs` → `parse-v2.mjs` → `build-app-data.mjs` is the live chain, with `verify-data.mjs` as a read-only check alongside it; `build-app-data.mjs` reads `tables-v2.json`. Scripts and `package-lock.json` are tracked (the lockfile pins `pdfjs-dist`, so next year's run reproduces this year's coordinates); the generated intermediates (`items.json`, `raw.txt`, `layout.txt`, `tables.json`, `tables-v2.json`) are gitignored. **`source.json` is the exception and IS tracked** — it records the filename, SHA-256 and page count of the PDF the committed data was extracted from, so provenance survives in git history rather than only on the machine that last ran the pipeline. `parse-tables.mjs` is the **superseded v1 parser**, kept only because `parse-v2.mjs:50` cites its output as the provenance of the column anchors — it is not part of the pipeline. `verify-data.mjs` reads `PAGE_TABLES` by slicing the literal out of `parse-v2.mjs` rather than importing it, because importing that script would re-run it and rewrite a pipeline intermediate as a side effect of verifying.
+**`_extraction/` layout:** `extract.mjs` → `parse-v2.mjs` → `build-app-data.mjs` is the live chain, with `verify-data.mjs` as a read-only check alongside it; `build-app-data.mjs` reads `tables-v2.json`. Scripts and `package-lock.json` are tracked (the lockfile pins `pdfjs-dist`, so next year's run reproduces this year's coordinates); the generated intermediates (`items.json`, `raw.txt`, `layout.txt`, `tables.json`, `tables-v2.json`) are gitignored. **`source.json` is the exception and IS tracked** — it records the filename, SHA-256 and page count of the PDF the committed data was extracted from, so provenance survives in git history rather than only on the machine that last ran the pipeline. `parse-tables.mjs` is the **superseded v1 parser**, kept only because the comment above `PAGE_TABLES` in `parse-v2.mjs` cites its output as the provenance of the column anchors — it is not part of the pipeline. `verify-data.mjs` reads `PAGE_TABLES` by slicing the literal out of `parse-v2.mjs` rather than importing it, because importing that script would re-run it and rewrite a pipeline intermediate as a side effect of verifying.
 
 ## Offline support — the service worker
 
@@ -190,7 +186,7 @@ Four decisions worth keeping:
 | Decision | Why |
 |---|---|
 | **`manifest: false`** | `public/manifest.webmanifest` is hand-maintained and its icon filenames are deliberately `-v3`-suffixed (see *App icons* below). Letting the plugin emit a second manifest would fight that. |
-| **`registerType: "autoUpdate"` + the update handling in `src/main.jsx`** | **These are a pair — removing either re-introduces stale clinical data.** autoUpdate gives the SW `skipWaiting` + `clientsClaim`, so a new version activates and claims open pages. But the generated `registerSW.js` only *registers*: the claimed page keeps running the bundle it already loaded, so the first visit after a deploy would still render the previous data. `main.jsx` closes that — see the block there, which carries the three peer-review fixes (F2/F3/F11) and why each is not hypothetical. |
+| **`registerType: "autoUpdate"` + the update handling in `src/main.jsx`** | **These are a pair — removing either re-introduces stale clinical data.** autoUpdate gives the SW `skipWaiting` + `clientsClaim`, so a new version activates and claims open pages. But the generated `registerSW.js` only *registers*: the claimed page keeps running the bundle it already loaded, so the first visit after a deploy would still render the previous data. `main.jsx` closes that — see the block there, which carries the first-claim guard, the bounded-freshness updates and the session handoff (*Service-worker invariants* below; the peer-review record is `docs/sw-peer-review-2026-10.md`) and why each is not hypothetical. |
 | **`globIgnores: ["icon-source.png", "og-image-v3.png"]`** | Both are served but never requested by the running app — `icon-source.png` is the 1 MB master artwork, and the OG image is only fetched by social crawlers, which do not run service workers. Precaching them cost 1.26 MB on every phone, 31% of the install, for nothing. |
 | **`maximumFileSizeToCacheInBytes: 3 MiB`** | Above the 2 MiB default. pdf.js's worker is ~1 MB today; a file that outgrows the cap is dropped from the precache **with no error**, which is the quiet failure this whole feature exists to avoid. |
 
@@ -203,33 +199,19 @@ Google Fonts are cross-origin and so cannot be precached — a `CacheFirst` runt
 `firebase.json`'s existing header shape already suits this: `sw.js` sits at the root and so is covered by the `**` → `no-cache` rule, which is what lets a new worker be discovered promptly.
 
 
-### What the peer review changed here, and the one thing still open
+### Service-worker invariants (each closed a real stale-data path; the reasons are in `src/main.jsx`)
 
-This feature was reviewed by Codex (gpt-6-astra) on 2026-10-01 against exactly the question that matters — *is there any path by which a resident is served stale susceptibility data?* It found several. These are fixed:
+- **First-claim guard tracks the transition**, not a one-time boolean: only the first `controllerchange` is swallowed; every later one reloads.
+- **Bounded freshness**: `registration.update()` on load, on `online`, and on becoming visible. Calling `register()` again is not a substitute — Chromium and WebKit can reuse an identical registration without re-fetching.
+- **`disableRange: true` in `PdfCanvas.jsx`**: the precached PDF is returned whole; a 200 answered to a Range request corrupts pdf.js offsets.
+- **`navigateFallbackDenylist` is `[/\/assets\//, /^[^?]*\./]`** — "a literal dot anywhere before the query". Workbox tests `pathname + search`, so an end-anchored extension test misses `.webmanifest` and any `?download=1` URL and serves HTML where the reader asked for the PDF.
+- **The selected audience survives an update reload only** (session handoff, read once and cleared); a manual reload starts at the default.
+- `index.html` icon/manifest refs use `%BASE_URL%`, not document-relative paths.
+- An oversize precache asset **fails the build** (vite-plugin-pwa throws); it is not silently dropped.
 
-| Finding | Was | Now |
-|---|---|---|
-| **F2** controller guard froze | `const hadController = Boolean(controller)` evaluated once. On a first-ever visit it is `false` **forever**, so every later update to that still-open tab was ignored — the exact staleness the reload exists to prevent. | Tracks the transition: only the first claim is swallowed, every subsequent controller change reloads. |
-| **F3** no bounded freshness | Nothing checked for updates after load. A phone resuming an installed app fires no `load`, so a backgrounded copy could stay on an old release indefinitely. | `registration.update()` on load, on `online`, and on becoming visible. (`register()` again is *not* a substitute — Chromium and WebKit can both reuse an identical registration without re-fetching.) |
-| **F9** PDF range requests | The SW returns the precached PDF as a complete response with no range handling, while pdf.js may issue a Range request and accept a `200` as though it were the range — corrupting offsets. | `disableRange: true` in `PdfCanvas.jsx`. The document is 840 KB and fully cached; ranged fetching bought nothing. |
-| **F10** fallback masked real files | Any unmatched in-scope navigation returned the app shell — navigating to `/og-image-v3.png` served HTML instead of the image. | `navigateFallbackDenylist` excludes `/assets/` and any path with a dot before the query. Verified: that URL returns `image/png`. **The first version of this fix was itself wrong — see below.** |
-
-⚠️ **F10's original pattern was `/\.[a-zA-Z0-9]{2,5}$/` and it was broken two ways** (caught on re-review 2026-10-03). Workbox tests the denylist against **`pathname + search`**, not the pathname:
-
-- `.webmanifest` is 11 characters, so `{2,5}` could never match it;
-- any query string defeated the `$` anchor, so `/MUHC-UH-Antibiogram-2026.pdf?download=1` fell through to the shell and returned **HTML where the reader asked for the PDF**.
-
-Now `/^[^?]*\./` — "a literal dot anywhere before the query". The lesson generalizes: an end-anchored extension test is wrong for Workbox navigation routes, because the string being tested carries the query.
-
-**Also fixed in the same pass:** `index.html`'s icon and manifest refs were document-relative (`href="manifest.webmanifest"`), so a document served at a deep path resolved them *against that path* and 404'd the manifest and every icon. They now use Vite's `%BASE_URL%`, which keeps them base-relative while still producing `/muhc-antibiogram/…` for the dev server. Verified in both builds' emitted HTML.
-| **F11** reload changed the population | The forced reload reset the audience filter to **All**, silently moving the reader off ICU/ED/Peds mid-lookup. | The selected audience is carried across an update reload only (session handoff, read once and cleared), so a manual reload still starts at the default. |
-| **F13** wrong comment | A comment claimed an oversize asset is dropped from the precache "with no error". | It actually **fails the build** — vite-plugin-pwa turns the size warning into a throw. Comment corrected. |
-
-### F1 — fixed 2026-10-03, and the "unavoidable tradeoff" was not one
+### Hosting rewrite — `^/[^.]*$`, deliberately
 
 **The rewrite is now `{ "regex": "^/[^.]*$", "destination": "/index.html" }`.** A missing asset-shaped path (anything containing a dot) 404s instead of being answered with the app shell. That closes the poisoning route: Workbox precaches any sub-400 response **without checking MIME type**, so while the catch-all stood, an asset fetch during service-worker install that raced a deploy could cache HTML under a `.js` URL.
-
-This file previously recorded F1 as an open decision, on the reasoning that Firebase's `regex` uses RE2, RE2 has no lookahead, so `^(?!...)` exclusion was impossible — therefore narrowing the rewrite had to trade cache-poisoning robustness against the deep links the retired `gh-pages` branch forwards. **The premise was true and the conclusion was wrong.** No lookahead is needed: a negated character class states the same policy positively. Codex agreed on re-review ("'No lookahead, therefore unavoidable tradeoff' was incorrect for this dot-exclusion policy").
 
 **Verified live after deploy, not reasoned:**
 
@@ -244,7 +226,7 @@ Note the policy is "a dot **anywhere** in the path", not "a file extension". A d
 
 **Two limits of this fix, both measured — do not mistake them for regressions:**
 
-- **It prevents new poisoning; it does not repair a cache already poisoned.** In practice a later deploy largely self-heals, because every asset is content-hashed: a new build references new URLs, so a poisoned entry sits in an outdated cache and `cleanupOutdatedCaches()` drops it. An earlier version of this file said the app "cannot self-recover" — too absolute, per Codex: `registerSW.js` registers independently of `main.jsx`, so a later release can recover a blank install.
+- **It prevents new poisoning; it does not repair a cache already poisoned.** In practice a later deploy largely self-heals, because every asset is content-hashed: a new build references new URLs, so a poisoned entry sits in an outdated cache and `cleanupOutdatedCaches()` drops it. `registerSW.js` registers independently of `main.jsx`, so a later release can recover a blank install.
 - **`/assets/<dotless>` still gets the shell, and it gets the immutable header.** Measured: `/assets/foo` returns 200 HTML with `public, max-age=31536000, immutable`. Excluding the `/assets` namespace in RE2 without lookahead means enumerating the prefix character by character, which is unreadable and easy to get wrong; and no precached asset is extension-less, so this is not a poisoning route for any build this app produces. Left as-is deliberately, with the measurement recorded so the next session need not re-derive it.
 
 ### ⚠️ Still open — the first-claim race (Codex, Medium, pre-existing)

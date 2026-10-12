@@ -163,14 +163,22 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
             <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-500 mb-2">
               Organisms covered · {audienceInfo.short} · sorted high → low
             </div>
+            {/* Describes the rows being DISPLAYED, not panel membership. An
+                absent key is not proof the column is absent — the parser only
+                records cells it accepted — so "this drug is not on the X
+                panel" could be untrue (peer review, Low, no current
+                instances). What is always true is where these figures came
+                from, so that is what this says. */}
             {tested.some((r) => r.fromAll) && (
               <p className="mb-2 text-[11px] leading-snug text-stone-600 bg-stone-100 border border-stone-200 rounded px-2 py-1.5">
-                {tested.every((r) => r.fromAll) ? "This drug is not on the " : "Some rows are not on the "}
-                {audienceInfo.short} panel. Rows marked{" "}
+                {tested.every((r) => r.fromAll)
+                  ? "No figures for this drug are specific to "
+                  : "Some figures below are not specific to "}
+                {audienceInfo.short}. Rows marked{" "}
                 <span className="text-[9px] font-bold uppercase tracking-wide px-1 py-px rounded bg-stone-200 text-stone-600">
                   all locations
                 </span>{" "}
-                show the all-locations figure instead — not specific to {audienceInfo.short}.
+                show the all-locations figure instead.
               </p>
             )}
             {tested.length === 0 ? (
@@ -187,8 +195,11 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                       <SusceptibilityChip value={r.value} size="md" lowN={lowN} />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-stone-900 truncate italic">{r.name}</div>
-                        <div className="text-[11px] text-stone-500 flex items-center gap-2">
-                          <span className={`text-[10px] font-bold px-1 py-px rounded ${gram.className}`}>
+                        {/* flex-wrap, and shrink-0 on the badge: the badge is
+                            one of only two provenance cues and must not be
+                            compressed away on a narrow phone. */}
+                        <div className="text-[11px] text-stone-500 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className={`text-[10px] font-bold px-1 py-px rounded shrink-0 ${gram.className}`}>
                             {gram.label}
                           </span>
                           <span>n = {r.n ?? "?"}</span>
@@ -196,9 +207,17 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                           {r.fromAll && (
                             // Visible text, not a tooltip: this figure comes
                             // from the all-locations panel, not the setting.
-                            <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
-                              all locations
-                            </span>
+                            // Both cues live on the ROW — the banner above the
+                            // list scrolls away, so it cannot be the only one
+                            // (peer review, Medium).
+                            <>
+                              <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+                                all locations
+                              </span>
+                              <span className="text-stone-600">
+                                not specific to {audienceInfo.short}
+                              </span>
+                            </>
                           )}
                         </div>
                       </div>

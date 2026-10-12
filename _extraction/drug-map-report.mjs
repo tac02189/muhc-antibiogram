@@ -102,7 +102,17 @@ const mapped = new Set(pairs.map((p) => p.slug));
 const unmapped = Object.keys(antibiotics).filter((s) => !mapped.has(s));
 
 console.log("-".repeat(W1 + W2 + 34));
-console.log(`${pairs.length} header labels -> ${bySlug.size} distinct drugs`);
+// Count drugs and bookkeeping columns separately. Lumping them gave
+// "34 distinct drugs" when only 32 are drugs (peer review, Low) — and that
+// inflated figure had already been copied into CLAUDE.md, which is how a
+// miscount in a review aid becomes a documented fact.
+const metaSlugs = [...bySlug.keys()].filter(isMetaColumn);
+const drugSlugs = [...bySlug.keys()].filter((s) => !isMetaColumn(s));
+const drugLabels = pairs.filter((p) => !isMetaColumn(p.slug)).length;
+console.log(
+  `${drugLabels} drug header labels -> ${drugSlugs.length} distinct drugs` +
+    `  (+ ${metaSlugs.length} bookkeeping columns: ${metaSlugs.join(", ")})`
+);
 if (unmapped.length) {
   console.log(`\n${unmapped.length} drug(s) in antibiotics.json with no PDF column header mapping:`);
   for (const s of unmapped) console.log(`  ${pad(s, W2)}${antibiotics[s].name}`);

@@ -134,7 +134,16 @@ const antibiotics = {
   // Named as the PDF prints the column header (Thiago, 2026-10-03). One
   // combined column covers both agents; the previous "Ceftriaxone (= cefotaxime)"
   // led with one of the two.
-  ceftriaxone: { name: "Cefotaxime/ceftriaxone", class: "3rd-gen cephalosporin", routes: ["IV"] },
+  // `name` labels the measured COLUMN; `regimenName` labels a PRESCRIBED
+  // agent on an Empiric card. They differ here on purpose, and the split
+  // exists because conflating them was rated High by peer review
+  // (2026-10-03): the PDF reports one combined column for both agents, so
+  // the column is honestly "Cefotaxime/ceftriaxone" — but every Empiric
+  // entry using this slug carries a ceftriaxone-specific dose (1–2 g IV
+  // q24h, pyelo / CAP / intra-abdominal first line). A two-agent heading
+  // over a q24h dose reads as "either agent, once daily", and cefotaxime
+  // is not a once-daily drug. See SyndromeView.nameOf.
+  ceftriaxone: { name: "Cefotaxime/ceftriaxone", regimenName: "Ceftriaxone", class: "3rd-gen cephalosporin", routes: ["IV"] },
   ceftazidime: { name: "Ceftazidime", class: "3rd-gen cephalosporin (anti-pseudo)", routes: ["IV"] },
   cefepime: { name: "Cefepime", class: "4th-gen cephalosporin", routes: ["IV"] },
   meropenem: { name: "Meropenem", class: "carbapenem", routes: ["IV"] },

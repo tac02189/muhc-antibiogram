@@ -50,8 +50,21 @@ export default function SyndromeView({ syndromes, antibiotics, organisms, audien
   );
 }
 
+// Empiric cards name a PRESCRIBED agent; the Organism and Drug tabs name a
+// MEASURED column. One metadata entry serves both, and for most drugs the two
+// coincide — but where they do not, `regimenName` is the prescribing label and
+// `name` stays the column label. Peer review rated the conflation High
+// (2026-10-03): "Cefotaxime/ceftriaxone" is the honest column heading, and it
+// sat above a ceftriaxone-specific "1–2 g IV q24h" on three cards, reading as
+// "either agent, once daily" when cefotaxime is not once-daily.
+//
+// Deliberately NOT a general de-qualifier: `cefazolin` has no `regimenName`,
+// so the SSTI card still reads "Cefazolin (urinary isolates)". That is
+// Thiago's reviewed decision of 2026-10-03 — see the SSTI note in CLAUDE.md.
+// Adding one here would quietly reverse it.
 function nameOf(slug, antibiotics) {
-  return antibiotics[slug]?.name || slug;
+  const meta = antibiotics[slug];
+  return meta?.regimenName || meta?.name || slug;
 }
 
 function SyndromeCard({ syndrome, antibiotics, organisms, audience, expanded, onToggle, onJumpToOrganism }) {

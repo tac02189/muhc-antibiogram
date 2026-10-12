@@ -63,6 +63,7 @@
   },
   "ceftriaxone": {
     "name": "Cefotaxime/ceftriaxone",
+    "regimenName": "Ceftriaxone",
     "class": "3rd-gen cephalosporin",
     "routes": [
       "IV"

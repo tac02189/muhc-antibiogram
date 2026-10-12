@@ -34,15 +34,22 @@ const MIN_N = antibiogram.legend?.isolateMinimum ?? 30;
 const orgById = new Map(antibiogram.organisms.map((o) => [o.id, o]));
 const drugName = (slug) => antibiotics[slug]?.name ?? slug;
 
-/** %S for one organism+drug across audiences, as a compact string. */
+/**
+ * %S for one organism+drug across audiences, as a compact string.
+ *
+ * Three absences, three symbols — they are NOT interchangeable, and collapsing
+ * two of them onto "—" was a real defect (peer review, Low): "on panel but no
+ * value" and "this organism is not reported in that setting at all" mean
+ * different things to a reviewer.
+ */
 function acrossAudiences(org, slug) {
   if (!org) return "organism not found";
   return AUDS.map((a) => {
     const d = org.data?.[a];
-    if (!d) return `${a} —`;
+    if (!d) return `${a} n/a`; // organism has no bucket for this setting
     const v = d.susceptibilities?.[slug];
-    if (v === undefined) return `${a} ·`; // not on this panel
-    if (v === null) return `${a} —`; // on panel, no value
+    if (v === undefined) return `${a} ·`; // drug not on this panel
+    if (v === null) return `${a} —`; // on panel, no value recorded
     const low = d.isolateCount != null && d.isolateCount < MIN_N ? "!" : "";
     return `${a} ${v}%${low}`;
   }).join("  ");
@@ -57,12 +64,27 @@ function acrossAudiences(org, slug) {
  */
 const claimedPcts = (text) => {
   const s = String(text || "");
-  return [...s.matchAll(/(\d{2,3})\s*%/g)]
-    .filter((m) => {
-      const before = s.slice(Math.max(0, m.index - 30), m.index).toLowerCase();
-      return !/resistance|resistant|>|≥|<|≤/.test(before);
-    })
-    .map((m) => Number(m[1]));
+  const out = [];
+  // Ranges first, and BOTH endpoints. Matching only the digits that touch the
+  // "%" took just the upper end of "~63–65%", so the lower bound of every
+  // range a rationale quoted went unchecked (peer review, Medium). Covers the
+  // en-dash the rationales actually use as well as a hyphen.
+  const RANGE = /(\d{2,3})\s*[–-]\s*(\d{2,3})\s*%/g;
+  const seen = [];
+  for (const m of s.matchAll(RANGE)) {
+    const before = s.slice(Math.max(0, m.index - 30), m.index).toLowerCase();
+    if (/resistance|resistant|>|≥|<|≤/.test(before)) continue;
+    out.push(Number(m[1]), Number(m[2]));
+    seen.push([m.index, m.index + m[0].length]);
+  }
+  for (const m of s.matchAll(/(\d{2,3})\s*%/g)) {
+    // Skip the "65%" half of a range already captured above.
+    if (seen.some(([a, b]) => m.index >= a && m.index < b)) continue;
+    const before = s.slice(Math.max(0, m.index - 30), m.index).toLowerCase();
+    if (/resistance|resistant|>|≥|<|≤/.test(before)) continue;
+    out.push(Number(m[1]));
+  }
+  return [...new Set(out)];
 };
 
 const H = (s) => (MD ? `\n## ${s}\n` : `\n${"=".repeat(74)}\n${s}\n${"=".repeat(74)}`);
@@ -73,9 +95,10 @@ console.log(
   MD
     ? "# Syndrome review brief — local susceptibility\n\n> Generated from `src/data/`. Recommends nothing; the Empiric cards are unreviewed drafts.\n>\n> Legend: `!` = fewer than " +
         MIN_N +
-        " isolates (below CLSI threshold, interpret with caution) · `·` = drug not on that panel · `—` = on panel, no value."
+        " isolates (below CLSI threshold, interpret with caution) · `·` = drug not on that panel · `—` = on panel, no value recorded · `n/a` = organism not reported in that setting.\n>\n> `CHECK` lines are a **pooled** heuristic: a quoted percentage is compared against every value for that drug across all of the card's organisms and settings at once. Its silence means nothing was 5 points away somewhere — **not** that the claim was validated."
     : `Syndrome review brief — local susceptibility\n` +
-        `Legend: ! = n < ${MIN_N} (below CLSI threshold) · "·" = not on that panel · "—" = no value\n` +
+        `Legend: ! = n < ${MIN_N} (below CLSI threshold) · "·" = not on that panel · "—" = no value recorded · n/a = organism not reported in that setting\n` +
+        `CHECK lines pool all organisms and settings; their silence is not validation.\n` +
         `Audiences: ${AUDS.join(", ")}`
 );
 
@@ -85,12 +108,25 @@ for (const syn of list) {
   console.log(H(`${syn.name}`));
   console.log(bullet(`Context:  ${syn.context || "—"}`));
   console.log(bullet(`Duration: ${syn.duration || "—"}`));
-  const orgs = (syn.relevantOrganisms || []).map((id) => orgById.get(id)).filter(Boolean);
+  // `notes` is part of the card the app renders, and the brief used to drop it
+  // (peer review, Medium). A reviewer approving a card from an aid that omits
+  // its own caveats — pregnancy redirection, ESBL escalation, pneumonia risk
+  // adjustments — is approving something they were not shown.
+  if (syn.notes) console.log(bullet(`Notes:    ${syn.notes}`));
+
+  const linked = syn.relevantOrganisms || [];
+  const orgs = linked.map((id) => orgById.get(id)).filter(Boolean);
+  const missing = linked.filter((id) => !orgById.get(id));
   console.log(
     bullet(
       `Organisms: ${orgs.length ? orgs.map((o) => o.name).join(", ") : "(none linked)"}`
     )
   );
+  // Previously dropped silently by .filter(Boolean), so a card could look
+  // fully covered while one of its organisms resolved to nothing.
+  if (missing.length) {
+    console.log(bullet(`  ⚠ linked organism id(s) not found in antibiogram.json: ${missing.join(", ")}`));
+  }
 
   for (const [section, label] of [
     ["firstLine", "FIRST LINE (draft)"],
@@ -107,7 +143,13 @@ for (const syn of list) {
       for (const org of orgs) {
         console.log(`${MD ? "  - " : "      "}${org.name}: ${acrossAudiences(org, e.drug)}`);
       }
-      // Discrepancy hint: a quoted percentage with no audience within 5 points.
+      // Discrepancy hint, POOLED across this card's organisms and settings.
+      // Pooling is deliberate — a rationale may legitimately quote a figure
+      // for the syndrome's gram-negatives as a group ("~81–92%") rather than
+      // for one organism — but it means a claim that matches the WRONG
+      // organism still passes. Hence the legend's warning that silence here
+      // is not validation, and the per-organism rows printed above, which are
+      // the thing actually worth reading.
       const claims = claimedPcts(why);
       if (claims.length) {
         const actuals = orgs.flatMap((o) =>
@@ -115,6 +157,15 @@ for (const syn of list) {
             (v) => typeof v === "number"
           )
         );
+        if (!actuals.length) {
+          // Previously silent, which was indistinguishable from agreement.
+          console.log(
+            `${MD ? "  - " : "      "}CHECK: rationale quotes ${claims
+              .map((c) => c + "%")
+              .join(", ")}, but the data holds NO value for this drug against ` +
+              `any of this card's organisms — nothing to compare it against.`
+          );
+        }
         const unmatched = claims.filter(
           (c) => actuals.length && !actuals.some((v) => Math.abs(v - c) <= 5)
         );
@@ -122,7 +173,7 @@ for (const syn of list) {
           console.log(
             `${MD ? "  - " : "      "}CHECK: rationale quotes ${unmatched
               .map((c) => c + "%")
-              .join(", ")}; nearest values in the data for this drug are ${[
+              .join(", ")}; values in the data for this drug across this card's organisms are ${[
               ...new Set(actuals),
             ]
               .sort((a, b) => b - a)

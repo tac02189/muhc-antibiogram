@@ -107,7 +107,33 @@ export default function OrganismView({
       </div>
 
       {/* DETAIL */}
-      {selected && (
+      {/* An organism stays selected across an audience switch, but the list is
+          filtered to organisms that HAVE a bucket for the audience — so the
+          selection can outlive its data (All → S. pyogenes → ICU). Rendering
+          OrganismDetail then crashed on `organism.data[audience].isolateCount`.
+          Say so instead; silently clearing the selection would read as the app
+          losing the reader's place. */}
+      {selected && !selected.data?.[audience] && (
+        <div className="mt-4 md:mt-0">
+          <button
+            onClick={() => setSelectedId(null)}
+            className="md:hidden inline-flex items-center gap-1 text-sm text-stone-600 mb-3"
+          >
+            <ArrowLeft className="w-4 h-4" /> All organisms
+          </button>
+          <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
+            <h2 className="font-display text-lg font-semibold italic text-stone-900">
+              {selected.name}
+            </h2>
+            <p className="mt-2 text-sm text-stone-600">
+              Not reported for <strong>{audienceInfo.short}</strong> — this organism has no
+              susceptibility panel in that setting. Switch the setting back, or pick another
+              organism.
+            </p>
+          </div>
+        </div>
+      )}
+      {selected && selected.data?.[audience] && (
         <OrganismDetail
           organism={selected}
           audience={audience}
@@ -136,13 +162,26 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   // switches to ED/ICU/Peds and look like missing data. The flag is rendered
   // as a visible badge, never a tooltip: the number is NOT specific to the
   // selected setting and must not be read as though it were.
+  // Each row carries the isolate count of the bucket its VALUE came from, so a
+  // fallback percentage is never read against the selected setting's n. Peer
+  // review found the mismatch (2026-10-03): Peds + S. pyogenes showed a
+  // fallback penicillin-IV of 100% — an all-locations figure over n=36 — under
+  // a header reading "n = 11" and "below CLSI threshold". Four rows differed
+  // that way, and the low-n judgement was being made against the wrong
+  // denominator in every one.
   const drugs = useMemo(() => {
     const own = d.susceptibilities || {};
-    const allPanel = (audience !== "all" && organism.data?.all?.susceptibilities) || {};
-    const rows = Object.entries(own).map(([slug, value]) => ({ slug, value, fromAll: false }));
+    const allBucket = audience !== "all" ? organism.data?.all : null;
+    const allPanel = allBucket?.susceptibilities || {};
+    const rows = Object.entries(own).map(([slug, value]) => ({
+      slug,
+      value,
+      fromAll: false,
+      n: d.isolateCount,
+    }));
     for (const [slug, value] of Object.entries(allPanel)) {
       if (own[slug] === undefined && value != null) {
-        rows.push({ slug, value, fromAll: true });
+        rows.push({ slug, value, fromAll: true, n: allBucket?.isolateCount });
       }
     }
     return rows
@@ -160,6 +199,10 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
 
   const tested = drugs.filter((dr) => dr.value != null);
   const untested = drugs.filter((dr) => dr.value == null);
+  // Whether any displayed value came from a bucket other than the selected
+  // setting — if so the header's n is qualified, because it does not cover
+  // every row beneath it.
+  const hasFallback = tested.some((dr) => dr.fromAll);
 
   return (
     <div className="mt-4 md:mt-0">
@@ -187,6 +230,7 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
             <div className="text-xs text-stone-300 mt-1 flex items-center gap-3">
               <span className="inline-flex items-center gap-1">
                 <Beaker className="w-3.5 h-3.5" /> n = {d.isolateCount ?? "?"} isolates
+                {hasFallback && " in this setting"}
               </span>
               {lowN && (
                 <span className="text-amber-300 inline-flex items-center gap-1">
@@ -204,9 +248,13 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                   % Susceptible — sorted high → low
                 </div>
                 <ul className="space-y-1.5">
-                  {tested.map((dr) => (
+                  {tested.map((dr) => {
+                    // Judge low-n against the denominator this row's value
+                    // actually came from, not the selected setting's.
+                    const rowLowN = dr.n != null && dr.n < isolateMinimum;
+                    return (
                     <li key={dr.slug} className="flex items-center gap-3 py-1">
-                      <SusceptibilityChip value={dr.value} size="md" />
+                      <SusceptibilityChip value={dr.value} size="md" lowN={rowLowN} />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-stone-900 flex items-center gap-1.5">
                           <span className="truncate">{dr.meta.name}</span>
@@ -225,6 +273,12 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                             <span className="text-stone-600">
                               {" · not specific to "}
                               {audienceInfo.short}
+                              {dr.n != null && ` · n = ${dr.n} all locations`}
+                            </span>
+                          )}
+                          {rowLowN && (
+                            <span className="text-amber-700">
+                              {" · low n"}
                             </span>
                           )}
                         </div>
@@ -239,7 +293,8 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                         </span>
                       )}
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
               </div>
             )}

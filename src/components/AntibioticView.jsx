@@ -95,9 +95,13 @@ export default function AntibioticView({ antibiotics, organisms, audience, audie
 }
 
 function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isolateMinimum, onBack }) {
-  // Build list: organisms tested against this drug in this audience.
-  const rows = useMemo(() => {
+  // Build list: organisms tested against this drug in this audience, plus the
+  // organisms the PDF marks intrinsically resistant to it (a black cell, no
+  // number). Those have no key in `susceptibilities`, so until 2026-10-13
+  // they simply did not appear here.
+  const { rows, resistant } = useMemo(() => {
     const out = [];
+    const ir = [];
     for (const o of organisms) {
       const d = o.data[audience];
       if (!d) continue;
@@ -105,6 +109,10 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
       let n = d.isolateCount;
       let fromAll = false;
       if (v === undefined) {
+        if ((d.intrinsicResistance || []).includes(slug)) {
+          ir.push({ id: o.id, name: o.name, fromAll: false });
+          continue;
+        }
         // Not on the selected setting's panel. Some columns the PDF prints
         // only on the all-locations tables (see CLAUDE.md "Qualified drug
         // columns"), so falling through here made the drug look untested
@@ -112,6 +120,10 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
         // it is NOT specific to the selected setting.
         if (audience === "all") continue;
         const allData = o.data?.all;
+        if ((allData?.intrinsicResistance || []).includes(slug)) {
+          ir.push({ id: o.id, name: o.name, fromAll: true });
+          continue;
+        }
         const allV = allData?.susceptibilities?.[slug];
         if (allV === undefined || allV === null) continue;
         v = allV;
@@ -128,12 +140,14 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
       });
     }
     // Sort: tested high→low, then untested alphabetic
-    return out.sort((a, b) => {
+    out.sort((a, b) => {
       if (a.value == null && b.value == null) return a.name.localeCompare(b.name);
       if (a.value == null) return 1;
       if (b.value == null) return -1;
       return b.value - a.value;
     });
+    ir.sort((a, b) => a.name.localeCompare(b.name));
+    return { rows: out, resistant: ir };
   }, [organisms, audience, slug]);
 
   const tested = rows.filter((r) => r.value != null);
@@ -183,7 +197,7 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
             )}
             {tested.length === 0 ? (
               <p className="text-sm text-stone-500 py-4 text-center">
-                Not on the panel for this setting.
+                {resistant.length ? "No susceptibility figures in this setting." : "Not on the panel for this setting."}
               </p>
             ) : (
               <ul className="space-y-1.5">
@@ -225,6 +239,30 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                   );
                 })}
               </ul>
+            )}
+            {resistant.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-stone-100">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+                  Intrinsically resistant · {audienceInfo.short} ({resistant.length})
+                </div>
+                <p className="mt-0.5 mb-2 text-[11px] text-stone-500">
+                  Marked as intrinsic resistance (a black cell) in the source PDF.
+                </p>
+                <ul className="space-y-1 text-xs text-stone-800">
+                  {resistant.map((r) => (
+                    <li key={r.id} className="min-w-0 flex items-start gap-1.5">
+                      <span aria-hidden="true" className="shrink-0 w-2 h-2 mt-[0.3rem] bg-stone-900" />
+                      <span className="min-w-0 break-words italic">{r.name}</span>
+                      {r.fromAll && (
+                        // Visible text, not a tooltip, as on the % rows above.
+                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+                          all locations
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         </div>

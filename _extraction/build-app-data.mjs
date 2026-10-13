@@ -83,10 +83,16 @@ for (const [pageKey, table] of Object.entries(tables)) {
       organismMap.set(org.name, entry);
     }
     // For pages 2+3 (both audience=all), merge susceptibilities into the same audience block.
+    // `intrinsicResistance` lists the drugs whose cell the PDF fills solid
+    // black (see parse-v2.mjs). Present only when non-empty; those drugs have
+    // no key in `susceptibilities`, so "not on this panel" and "intrinsically
+    // resistant" both read as an absent key unless this list is consulted.
+    const ir = org.intrinsicResistance || [];
     if (!entry.data[audience]) {
       entry.data[audience] = {
         isolateCount: org.isolateCount,
         susceptibilities: { ...org.susceptibilities },
+        ...(ir.length ? { intrinsicResistance: [...ir] } : {}),
         nitrofurantoinTested: org.nitrofurantoinTested,
       };
     } else {
@@ -94,6 +100,10 @@ for (const [pageKey, table] of Object.entries(tables)) {
       Object.assign(entry.data[audience].susceptibilities, org.susceptibilities);
       if (entry.data[audience].isolateCount == null) {
         entry.data[audience].isolateCount = org.isolateCount;
+      }
+      if (ir.length) {
+        const merged = new Set([...(entry.data[audience].intrinsicResistance || []), ...ir]);
+        entry.data[audience].intrinsicResistance = [...merged].sort();
       }
     }
   }
@@ -109,6 +119,56 @@ const organisms = [...organismMap.values()].sort((a, b) => {
 
 // --- Antibiotic metadata ---
 // Classes used for grouping in the UI. Routes affect dosing decisions.
+//
+// `notes` and `noteAppliesTo` (option C, Thiago, 2026-10-13). A note WITHOUT
+// noteAppliesTo is about the drug itself — its route, its breakpoint, how it
+// is used — and the Organism view shows it wherever the drug has a figure. A
+// note WITH noteAppliesTo names the organisms it concerns, and is shown only
+// on those, including where the drug is blank or intrinsically resistant:
+// there the note is the explanation (Pseudomonas → gentamicin is blank
+// because CLSI no longer recommends it). Before this, every note was shown on
+// every organism with a figure, so gentamicin's Pseudomonas warning sat under
+// eleven Enterobacterales and never under Pseudomonas.
+//
+// The groups are derived from the organism list rather than typed out, so a
+// new enterococcal or HECK-Yes row in next year's PDF is covered without
+// editing this file. Each must be non-empty; the build stops otherwise.
+const idsWhere = (label, pred) => {
+  const ids = organisms.filter(pred).map((o) => o.id);
+  if (ids.length === 0) throw new Error(`noteAppliesTo group "${label}" matched no organism — did the PDF rename it?`);
+  console.log(`noteAppliesTo ${label}: ${ids.join(", ")}`);
+  return ids;
+};
+const PSEUDOMONAS = idsWhere("Pseudomonas", (o) => o.name.startsWith("Pseudomonas aeruginosa"));
+const ENTEROCOCCI = idsWhere("Enterococcus", (o) => o.name.startsWith("Enterococcus"));
+const S_AUREUS = idsWhere("S. aureus", (o) => o.name.startsWith("Staphylococcus aureus"));
+// HECK-Yes, by the names in the PDF's own definition (p3 footnote): Hafnia
+// alvei, Enterobacter cloacae complex, Citrobacter freundii, Klebsiella
+// aerogenes and Yersinia enterocolitica. The 2026 PDF has rows for the middle
+// three. The PDF also stars (*) these organisms on its gram-negative tables;
+// the check below requires the names and the stars to agree, so a renamed
+// organism or a dropped star stops the build instead of silently taking the
+// warning off one organism (peer review, 2026-10-13). S. pneumoniae
+// (blood/CSF)* is starred for a different footnote — hence gram-negative only.
+const HECK_YES_NAMES = ["Hafnia alvei", "Enterobacter cloacae", "Citrobacter freundii", "Klebsiella aerogenes", "Yersinia enterocolitica"];
+const HECK_YES = idsWhere("HECK-Yes", (o) => HECK_YES_NAMES.some((n) => o.name.startsWith(n)));
+{
+  const starred = organisms.filter((o) => o.gramStain === "negative" && o.name.endsWith("*")).map((o) => o.id);
+  const unstarred = HECK_YES.filter((id) => !starred.includes(id));
+  const unnamed = starred.filter((id) => !HECK_YES.includes(id));
+  if (unstarred.length || unnamed.length) {
+    throw new Error(
+      `HECK-Yes names and the PDF's stars disagree — named but not starred: [${unstarred.join(", ")}]; ` +
+        `starred but not named: [${unnamed.join(", ")}]. Check the PDF's HECK-Yes footnote.`
+    );
+  }
+}
+// Approved wording (Thiago, 2026-10-13), restoring what the PDF's blood-culture
+// page says and the old note dropped: "even if susceptible" and the ID
+// exception. The page names ceftriaxone too, which had no note before.
+const HECK_NOTE =
+  "Avoid for HECK-Yes organisms (inducible AmpC), even if the micro report says susceptible, unless discussed with ID.";
+
 const antibiotics = {
   penicillin: { name: "Penicillin", class: "penicillin", routes: ["IV", "PO"] },
   // The PDF reports penicillin under two different headers and they are kept
@@ -120,7 +180,7 @@ const antibiotics = {
   oxacillin: { name: "Oxacillin", class: "penicillin", routes: ["IV"], notes: "Susceptibility implies cefazolin & cephalexin susceptibility." },
   ampicillin: { name: "Ampicillin", class: "penicillin", routes: ["IV", "PO"] },
   "ampicillin-sulbactam": { name: "Ampicillin/sulbactam", class: "beta-lactam/inhibitor", routes: ["IV"] },
-  "piperacillin-tazobactam": { name: "Piperacillin/tazobactam", class: "beta-lactam/inhibitor", routes: ["IV"], notes: "Avoid for HECK-Yes organisms (inducible AmpC)." },
+  "piperacillin-tazobactam": { name: "Piperacillin/tazobactam", class: "beta-lactam/inhibitor", routes: ["IV"], notes: HECK_NOTE, noteAppliesTo: HECK_YES },
   // The qualifier belongs in the NAME, not only in notes. Every cefazolin
   // column in the PDF is labelled "(urinary isolates only)" — there is no
   // plain/systemic cefazolin column anywhere in the document — and the urinary
@@ -143,18 +203,19 @@ const antibiotics = {
   // q24h, pyelo / CAP / intra-abdominal first line). A two-agent heading
   // over a q24h dose reads as "either agent, once daily", and cefotaxime
   // is not a once-daily drug. See SyndromeView.nameOf.
-  ceftriaxone: { name: "Cefotaxime/ceftriaxone", regimenName: "Ceftriaxone", class: "3rd-gen cephalosporin", routes: ["IV"] },
+  ceftriaxone: { name: "Cefotaxime/ceftriaxone", regimenName: "Ceftriaxone", class: "3rd-gen cephalosporin", routes: ["IV"], notes: HECK_NOTE, noteAppliesTo: HECK_YES },
   ceftazidime: { name: "Ceftazidime", class: "3rd-gen cephalosporin (anti-pseudo)", routes: ["IV"] },
   cefepime: { name: "Cefepime", class: "4th-gen cephalosporin", routes: ["IV"] },
   meropenem: { name: "Meropenem", class: "carbapenem", routes: ["IV"] },
-  amikacin: { name: "Amikacin", class: "aminoglycoside", routes: ["IV"], notes: "For Pseudomonas, urinary tract infections only." },
-  gentamicin: { name: "Gentamicin", class: "aminoglycoside", routes: ["IV"], notes: "No longer recommended for Pseudomonas per CLSI." },
-  "gentamicin-synergy": { name: "Gentamicin synergy", class: "aminoglycoside (synergy)", routes: ["IV"], notes: "For Enterococcus, combined with cell-wall agent." },
+  amikacin: { name: "Amikacin", class: "aminoglycoside", routes: ["IV"], notes: "For Pseudomonas, urinary tract infections only.", noteAppliesTo: PSEUDOMONAS },
+  gentamicin: { name: "Gentamicin", class: "aminoglycoside", routes: ["IV"], notes: "No longer recommended for Pseudomonas per CLSI.", noteAppliesTo: PSEUDOMONAS },
+  "gentamicin-synergy": { name: "Gentamicin synergy", class: "aminoglycoside (synergy)", routes: ["IV"], notes: "For Enterococcus, combined with cell-wall agent.", noteAppliesTo: ENTEROCOCCI },
   tobramycin: { name: "Tobramycin", class: "aminoglycoside", routes: ["IV"] },
   clindamycin: { name: "Clindamycin", class: "lincosamide", routes: ["IV", "PO"] },
   erythromycin: { name: "Erythromycin", class: "macrolide", routes: ["IV", "PO"] },
   vancomycin: { name: "Vancomycin", class: "glycopeptide", routes: ["IV", "PO"], notes: "PO only for C. difficile." },
-  rifampin: { name: "Rifampin", class: "rifamycin", routes: ["IV", "PO"], notes: "Adjunct only — never monotherapy." },
+  // Scoped to S. aureus: the PDF's footnote on this column is about S. aureus.
+  rifampin: { name: "Rifampin", class: "rifamycin", routes: ["IV", "PO"], notes: "Adjunct only — never monotherapy.", noteAppliesTo: S_AUREUS },
   linezolid: { name: "Linezolid", class: "oxazolidinone", routes: ["IV", "PO"] },
   tetracycline: { name: "Tetracycline", class: "tetracycline", routes: ["PO"] },
   minocycline: { name: "Minocycline", class: "tetracycline", routes: ["IV", "PO"], notes: "Inadequate blood levels — don't use for bacteremia." },

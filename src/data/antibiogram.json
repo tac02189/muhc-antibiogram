@@ -68,6 +68,11 @@
             "gentamicin-synergy": 75,
             "nitrofurantoin": 99
           },
+          "intrinsicResistance": [
+            "ceftriaxone",
+            "clindamycin",
+            "tmp-smx"
+          ],
           "nitrofurantoinTested": 161
         },
         "ed": {
@@ -86,6 +91,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 99
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": 176
         },
         "icu": {
@@ -105,6 +121,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": 40
         },
         "peds": {
@@ -125,6 +152,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -149,6 +187,11 @@
             "gentamicin-synergy": null,
             "nitrofurantoin": 28
           },
+          "intrinsicResistance": [
+            "ceftriaxone",
+            "clindamycin",
+            "tmp-smx"
+          ],
           "nitrofurantoinTested": 18
         },
         "icu": {
@@ -168,6 +211,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 11
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": 9
         }
       }
@@ -192,6 +246,11 @@
             "gentamicin-synergy": 76,
             "nitrofurantoin": 84
           },
+          "intrinsicResistance": [
+            "ceftriaxone",
+            "clindamycin",
+            "tmp-smx"
+          ],
           "nitrofurantoinTested": 234
         },
         "ed": {
@@ -210,6 +269,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 89
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": 213
         },
         "peds": {
@@ -230,6 +300,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -256,6 +337,17 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 80
           },
+          "intrinsicResistance": [
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "tmp-smx",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": 56
         }
       }
@@ -279,6 +371,12 @@
             "gentamicin-synergy": null,
             "nitrofurantoin": 100
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ceftriaxone",
+            "oxacillin",
+            "penicillin-iv"
+          ],
           "nitrofurantoinTested": 22
         },
         "ed": {
@@ -295,6 +393,19 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "meropenem",
+            "oxacillin",
+            "penicillin",
+            "piperacillin-tazobactam"
+          ],
           "nitrofurantoinTested": 39
         },
         "icu": {
@@ -312,6 +423,19 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "meropenem",
+            "oxacillin",
+            "penicillin",
+            "piperacillin-tazobactam"
+          ],
           "nitrofurantoinTested": 3
         },
         "peds": {
@@ -330,6 +454,19 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefepime",
+            "cefoxitin",
+            "ceftazidime",
+            "ceftriaxone",
+            "meropenem",
+            "oxacillin",
+            "penicillin",
+            "piperacillin-tazobactam"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -383,6 +520,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": 36
         },
         "icu": {
@@ -410,6 +550,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": 6
         },
         "peds": {
@@ -438,6 +581,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -491,6 +637,9 @@
             "levofloxacin": 73,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": 54
         },
         "icu": {
@@ -518,6 +667,9 @@
             "levofloxacin": 69,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": 12
         },
         "peds": {
@@ -546,6 +698,9 @@
             "levofloxacin": 44,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -599,6 +754,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -652,6 +810,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -740,6 +901,9 @@
             "levofloxacin": 100,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -793,6 +957,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         },
         "peds": {
@@ -821,6 +988,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ceftazidime"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -847,6 +1017,12 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin"
+          ],
           "nitrofurantoinTested": 35
         },
         "ed": {
@@ -866,6 +1042,16 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 84
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 38
         }
       }
@@ -894,6 +1080,14 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 89
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 27
         }
       }
@@ -920,6 +1114,12 @@
             "levofloxacin": 91,
             "nitrofurantoin-urinary": 39
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin"
+          ],
           "nitrofurantoinTested": 57
         },
         "ed": {
@@ -939,6 +1139,16 @@
             "levofloxacin": 94,
             "nitrofurantoin-urinary": 32
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 80
         },
         "icu": {
@@ -960,6 +1170,15 @@
             "levofloxacin": 93,
             "nitrofurantoin-urinary": 43
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 7
         },
         "peds": {
@@ -980,6 +1199,17 @@
             "levofloxacin": 100,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1032,6 +1262,13 @@
             "levofloxacin": 67,
             "nitrofurantoin-urinary": 96
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 1556
         },
         "icu": {
@@ -1056,6 +1293,12 @@
             "levofloxacin": 65,
             "nitrofurantoin-urinary": 98
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 145
         },
         "peds": {
@@ -1079,6 +1322,14 @@
             "levofloxacin": 74,
             "nitrofurantoin-urinary": 100
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 33
         }
       }
@@ -1105,6 +1356,12 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 10
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin"
+          ],
           "nitrofurantoinTested": 21
         },
         "ed": {
@@ -1124,6 +1381,16 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 12
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 34
         },
         "icu": {
@@ -1145,6 +1412,15 @@
             "levofloxacin": 97,
             "nitrofurantoin-urinary": 9
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 11
         }
       }
@@ -1174,6 +1450,9 @@
             "levofloxacin": 88,
             "nitrofurantoin-urinary": 86
           },
+          "intrinsicResistance": [
+            "ampicillin"
+          ],
           "nitrofurantoinTested": 21
         },
         "ed": {
@@ -1195,6 +1474,14 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 85
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 26
         },
         "peds": {
@@ -1217,6 +1504,15 @@
             "levofloxacin": 91,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1246,6 +1542,9 @@
             "levofloxacin": 76,
             "nitrofurantoin-urinary": 28
           },
+          "intrinsicResistance": [
+            "ampicillin"
+          ],
           "nitrofurantoinTested": 228
         },
         "ed": {
@@ -1267,6 +1566,14 @@
             "levofloxacin": 70,
             "nitrofurantoin-urinary": 26
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 295
         },
         "icu": {
@@ -1290,6 +1597,13 @@
             "levofloxacin": 78,
             "nitrofurantoin-urinary": 27
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 51
         },
         "peds": {
@@ -1312,6 +1626,15 @@
             "levofloxacin": 100,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1341,6 +1664,9 @@
             "ciprofloxacin": 57,
             "levofloxacin": 71
           },
+          "intrinsicResistance": [
+            "nitrofurantoin-urinary"
+          ],
           "nitrofurantoinTested": null
         },
         "ed": {
@@ -1361,6 +1687,15 @@
             "ciprofloxacin": 59,
             "levofloxacin": 57
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "erythromycin",
+            "nitrofurantoin-urinary",
+            "oxacillin",
+            "penicillin",
+            "tetracycline",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         },
         "icu": {
@@ -1383,6 +1718,14 @@
             "ciprofloxacin": 69,
             "levofloxacin": 74
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "nitrofurantoin-urinary",
+            "oxacillin",
+            "penicillin",
+            "tetracycline",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1406,6 +1749,15 @@
             "levofloxacin": 81,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "minocycline",
+            "tmp-smx"
+          ],
           "nitrofurantoinTested": null
         },
         "ed": {
@@ -1421,6 +1773,20 @@
             "levofloxacin": 79,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "tetracycline",
+            "tmp-smx",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         },
         "icu": {
@@ -1438,6 +1804,19 @@
             "levofloxacin": 81,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "clindamycin",
+            "oxacillin",
+            "penicillin",
+            "tetracycline",
+            "tmp-smx",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         },
         "peds": {
@@ -1453,6 +1832,22 @@
             "levofloxacin": 88,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "clindamycin",
+            "erythromycin",
+            "minocycline",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "tetracycline",
+            "tmp-smx",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1482,6 +1877,9 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 85
           },
+          "intrinsicResistance": [
+            "ampicillin"
+          ],
           "nitrofurantoinTested": 26
         }
       }
@@ -1510,6 +1908,14 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": 84
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": 38
         },
         "peds": {
@@ -1533,6 +1939,14 @@
             "levofloxacin": null,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "clindamycin",
+            "erythromycin",
+            "oxacillin",
+            "penicillin",
+            "rifampin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1559,6 +1973,12 @@
             "ciprofloxacin": 95,
             "levofloxacin": 94
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "nitrofurantoin-urinary"
+          ],
           "nitrofurantoinTested": null
         },
         "ed": {
@@ -1577,6 +1997,17 @@
             "ciprofloxacin": 94,
             "levofloxacin": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "erythromycin",
+            "nitrofurantoin-urinary",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         },
         "icu": {
@@ -1597,6 +2028,16 @@
             "ciprofloxacin": 98,
             "levofloxacin": 98
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "clindamycin",
+            "nitrofurantoin-urinary",
+            "oxacillin",
+            "penicillin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1617,6 +2058,18 @@
             "levofloxacin": 91,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "amikacin",
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "gentamicin",
+            "meropenem",
+            "piperacillin-tazobactam",
+            "tobramycin"
+          ],
           "nitrofurantoinTested": null
         },
         "icu": {
@@ -1630,6 +2083,23 @@
             "levofloxacin": 90,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "amikacin",
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "clindamycin",
+            "gentamicin",
+            "meropenem",
+            "oxacillin",
+            "penicillin",
+            "piperacillin-tazobactam",
+            "tetracycline",
+            "tobramycin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         },
         "peds": {
@@ -1643,6 +2113,24 @@
             "levofloxacin": 82,
             "nitrofurantoin-urinary": null
           },
+          "intrinsicResistance": [
+            "ampicillin",
+            "ampicillin-sulbactam",
+            "cefazolin",
+            "cefoxitin",
+            "ceftriaxone",
+            "clindamycin",
+            "erythromycin",
+            "gentamicin",
+            "meropenem",
+            "oxacillin",
+            "penicillin",
+            "piperacillin-tazobactam",
+            "rifampin",
+            "tetracycline",
+            "tobramycin",
+            "vancomycin"
+          ],
           "nitrofurantoinTested": null
         }
       }
@@ -1744,6 +2232,9 @@
             "caspofungin": 100,
             "micafungin": 100
           },
+          "intrinsicResistance": [
+            "fluconazole"
+          ],
           "nitrofurantoinTested": null
         }
       }

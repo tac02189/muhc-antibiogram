@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const allItems = JSON.parse(await readFile(join(__dirname, "items.json"), "utf8"));
+// Filled shapes from extract.mjs. The solid black ones are the PDF's
+// intrinsic-resistance cells; see blackCellsOn() below.
+const allFills = JSON.parse(await readFile(join(__dirname, "fills.json"), "utf8"));
 
 // Canonical antibiotic slug (used as JSON key — kebab-case, no special chars)
 const SLUG = {
@@ -399,6 +402,44 @@ function isOrganismName(name) {
   return /^[A-Z][a-z]+/.test(name) && name.length > 4;
 }
 
+// Intrinsic resistance. The PDF fills such a cell solid black and prints
+// nothing in it (legend: "▪ Organism exhibits intrinsic resistance to this
+// drug"), so there is no text to snap to a column. A black box marks the drug
+// whose column ANCHOR lies inside the box, for the organism whose value line
+// runs through it. Column correctness therefore rests on the anchors, which
+// verify-data.mjs Check A validates against the printed headers.
+//
+// Black = every channel <= 40 and opaque (the 2026 cells are exactly 0,0,0 at
+// full opacity; the header band is 36,64,97). Cell-sized = at least 8 x 6 pt,
+// which excludes rules.
+const isBlackCell = (f) => Math.max(...f.rgb) <= 40 && (f.alpha ?? 1) >= 0.9 && f.w >= 8 && f.h >= 6;
+function blackCellsOn(pageNum, def) {
+  const page = allFills.find((p) => p.page === pageNum);
+  return (page?.fills || [])
+    .filter(isBlackCell)
+    .filter((f) => f.y + f.h >= def.dataYStart && f.y <= def.dataYEnd)
+    .map((f) => ({ ...f, rowsMatched: 0 }));
+}
+
+// Black-cell anomalies stop the run before tables-v2.json is written. They
+// used to be warnings, so a drifted anchor printed a line and the pipeline
+// carried on without the cell — a missing intrinsic-resistance mark, reaching
+// the app as a blank (peer review, 2026-10-13). verify-data.mjs fails on the
+// same cases independently.
+const anomalies = [];
+
+// The baseline of a row's values: the median y of its number and dash items.
+// Not row.y, which is a running average over everything clustered into the
+// row — on the ED page the rotated "Negative" section label joins the
+// K. oxytoca row and drags row.y into the next row's cells.
+function valueLineY(row, leftEdge) {
+  const ys = row.items
+    .filter((it) => it.x >= leftEdge && /^(\d+(\.\d+)?|-)$/.test(it.str.trim()))
+    .map((it) => it.y)
+    .sort((a, b) => a - b);
+  return ys.length ? ys[Math.floor(ys.length / 2)] : row.y;
+}
+
 const tables = {};
 
 for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
@@ -414,13 +455,20 @@ for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
   rows = rows.map(mergeContiguousDigits);
   rows = mergeWrappedRows(rows, leftEdge);
   const organisms = [];
+  const blackCells = blackCellsOn(pageNum, def);
 
   for (const row of rows) {
     const name = extractName(row, leftEdge);
     if (!isOrganismName(name)) continue;
     const cells = snapValuesToColumns(row, def.columns, leftEdge);
+    const lineY = valueLineY(row, leftEdge);
+    const rowBlack = blackCells.filter((cell) => lineY >= cell.y - 1 && lineY <= cell.y + cell.h + 1);
+    // A row needs two numbers to count as data — unless black cells run
+    // through it: an organism with one figure and the rest intrinsically
+    // resistant is still an organism row, and dropping it would drop its
+    // black cells with it.
     const numericCount = Object.values(cells).filter((v) => v !== "-").length;
-    if (numericCount < 2) continue;
+    if (numericCount < 2 && rowBlack.length === 0) continue;
 
     // Extract isolate count separately
     const isolatesLabel = def.columns[0].label;
@@ -441,14 +489,57 @@ for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
       }
     }
 
+    // The PDF draws many cells twice, so one (organism, drug) can own two
+    // boxes; the Set keeps one entry each.
+    const intrinsicResistance = new Set();
+    let countCellBlack = false;
+    for (const cell of rowBlack) {
+      cell.rowsMatched++;
+      const where = `p${pageNum} ${name}: black cell at x=${cell.x} y=${cell.y}`;
+      const inside = def.columns.filter((c) => c.x >= cell.x && c.x <= cell.x + cell.w);
+      if (inside.length !== 1) {
+        anomalies.push(`${where} holds ${inside.length} column anchors`);
+        continue;
+      }
+      const slug = SLUG[inside[0].label] || inside[0].label.toLowerCase();
+      // An organism intrinsically resistant to nitrofurantoin (Proteus,
+      // Serratia) has its "# tested with nitrofurantoin" cell blacked out
+      // too. That column is a count, not a drug — checked below.
+      if (slug === "_n_nitrofurantoin") {
+        countCellBlack = true;
+        continue;
+      }
+      if (slug.startsWith("_")) {
+        anomalies.push(`${where} lands on the "${inside[0].label}" column, which is not a drug`);
+        continue;
+      }
+      if (slug in susceptibilities) {
+        anomalies.push(`${where} also carries text for ${slug}`);
+        continue;
+      }
+      intrinsicResistance.add(slug);
+    }
+    if (countCellBlack && !intrinsicResistance.has("nitrofurantoin") && !intrinsicResistance.has("nitrofurantoin-urinary")) {
+      anomalies.push(`p${pageNum} ${name}: "# tested with nitrofurantoin" is black but nitrofurantoin itself is not`);
+    }
+
     organisms.push({
       name,
       isolateCount: isolateCount ? Number(isolateCount) : null,
       susceptibilities,
+      intrinsicResistance: [...intrinsicResistance].sort(),
       nitrofurantoinTested: cells["# Isolates tested with nitrofurantoin"]
         ? Number(cells["# Isolates tested with nitrofurantoin"])
         : null,
     });
+  }
+
+  // Every black cell belongs to exactly one organism row. A miss means a row
+  // was skipped or a row's y moved.
+  for (const cell of blackCells) {
+    if (cell.rowsMatched !== 1) {
+      anomalies.push(`p${pageNum}: black cell at x=${cell.x} y=${cell.y} matched ${cell.rowsMatched} organism rows`);
+    }
   }
 
   tables[`page${pageNum}`] = {
@@ -456,6 +547,12 @@ for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
     audience: def.audience,
     organisms,
   };
+}
+
+if (anomalies.length) {
+  console.error(`STOPPED — ${anomalies.length} black-cell (intrinsic resistance) anomaly/anomalies; tables-v2.json NOT written:`);
+  for (const a of anomalies) console.error(`  x ${a}`);
+  process.exit(1);
 }
 
 await writeFile(join(__dirname, "tables-v2.json"), JSON.stringify(tables, null, 2), "utf8");
@@ -468,6 +565,7 @@ for (const [key, t] of Object.entries(tables)) {
       .filter(([k, v]) => v !== null)
       .map(([k, v]) => `${k}=${v}`)
       .join(" ");
-    console.log(`  ${o.name} (n=${o.isolateCount}) ${sus}`);
+    const ir = o.intrinsicResistance.length ? ` | intrinsic R: ${o.intrinsicResistance.join(" ")}` : "";
+    console.log(`  ${o.name} (n=${o.isolateCount}) ${sus}${ir}`);
   }
 }

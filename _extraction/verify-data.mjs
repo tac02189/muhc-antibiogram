@@ -35,6 +35,23 @@
 // comparison runs in BOTH directions, and nothing fails open: an unmatched
 // row, an unexpected key or a missing cell is a failure, not a note.
 //
+// CHECK D — INTRINSIC RESISTANCE (added 2026-10-13)
+// -------------------------------------------------
+// The PDF marks intrinsic resistance by filling a cell solid black and
+// printing nothing in it. Checks A-C read only text, so for as long as the
+// pipeline ignored those cells this verifier passed while 367 of them were
+// missing from the app. Check D reads the filled boxes extract.mjs records
+// (fills.json) and compares them with `intrinsicResistance` in both
+// directions. What it checks independently of parse-v2 is the ROW (its own
+// row inventory from layout.txt), completeness both ways, and that each black
+// cell is empty. Its column rule — nearest anchor to the box's centre —
+// picks the same anchor as parse-v2's "anchor inside the box" whenever exactly
+// one anchor is inside (peer review, 2026-10-13), so column correctness rests
+// on Check A validating every anchor against its printed header. And it trusts
+// fills.json: a black cell drawn by an operator extract.mjs does not model
+// would be missing from both, which is why any image or shading on a table
+// page fails here.
+//
 // WHAT THIS STILL DOES NOT DO
 // ---------------------------
 // It cannot tell you the PDF itself is right, and it is not the hand
@@ -54,6 +71,7 @@ const ROOT = join(__dirname, "..");
 
 const items = JSON.parse(await readFile(join(__dirname, "items.json"), "utf8"));
 const layout = await readFile(join(__dirname, "layout.txt"), "utf8");
+const fills = JSON.parse(await readFile(join(__dirname, "fills.json"), "utf8"));
 
 // Bind verification to the PDF the app actually serves.
 //
@@ -371,6 +389,41 @@ function tokensOf(name) {
 let rowsMatched = 0;
 let cellsChecked = 0;
 let pdfRowCount = 0;
+let irCellsChecked = 0;
+
+// Every solid-black, cell-sized box on each table page, wherever it sits.
+// Each must end up claimed by exactly one PDF data row (checked at the end),
+// so a black cell the row inventory misses is a failure, not a silent skip.
+const blackCellsByPage = new Map();
+for (const pageNumStr of Object.keys(PAGE_TABLES)) {
+  const pageNum = Number(pageNumStr);
+  const page = fills.find((p) => p.page === pageNum);
+  if (!page) {
+    failures.push(`Check D — page ${pageNum} is absent from fills.json; re-run extract.mjs`);
+    continue;
+  }
+  // Images and shadings are painted without a box extract.mjs can record; a
+  // black cell drawn that way would be invisible to both parser and verifier.
+  for (const [op, count] of Object.entries(page.unmodelled || {})) {
+    failures.push(`Check D — page ${pageNum} paints ${count} × ${op}, which extract.mjs does not turn into boxes — inspect it`);
+  }
+  const black = page.fills
+    .filter((f) => f.rgb.every((c) => c <= 40) && (f.alpha ?? 1) >= 0.9 && f.w >= 8 && f.h >= 6)
+    .map((f) => ({ ...f, claimedBy: [] }));
+  // Every 2026 table page has black cells. A page with none means its fills
+  // went missing — or the new PDF genuinely has none there, which a human
+  // should confirm before relaxing this.
+  if (black.length === 0) {
+    failures.push(`Check D — page ${pageNum} has no black cells at all; expected at least one`);
+  }
+  blackCellsByPage.set(pageNum, black);
+}
+
+// The y of a row's value line: median baseline of its number/dash tokens.
+const medianY = (toks) => {
+  const ys = toks.map((t) => t.y).sort((a, b) => a - b);
+  return ys.length ? ys[Math.floor(ys.length / 2)] : null;
+};
 
 // An audience spans several pages — "all" is printed across three (gram
 // positive, gram negative, fungal). So the forward match runs per page, but the
@@ -452,7 +505,14 @@ for (const [audience, pages] of pagesByAudience) {
       const has = slug in committed;
       const jsonValue = has ? committed[slug] : undefined;
       if (pdfValue === "-") {
-        if (has && jsonValue !== null) {
+        // The key must exist, as null. A deleted key used to pass, and the
+        // "Not tested" entry — and any organism-specific note on it, such as
+        // Pseudomonas → gentamicin — vanished with it (peer review, 2026-10-13).
+        if (!has) {
+          failures.push(
+            `Check C — ${org.name} [${audience}] ${slug}: PDF p${pageNum} shows "-" (not tested) but the JSON has NO SUCH KEY — "Not tested" entry dropped`
+          );
+        } else if (jsonValue !== null) {
           failures.push(
             `Check C — ${org.name} [${audience}] ${slug}: PDF p${pageNum} shows "-" (not tested) but JSON records ${jsonValue}`
           );
@@ -513,6 +573,72 @@ for (const [audience, pages] of pagesByAudience) {
         );
       }
     }
+
+    // Check D — the black cells on this row, against `intrinsicResistance`.
+    const lineY = medianY(rowItems.filter((it) => /^(\d+(\.\d+)?|-)$/.test(it.str.trim())));
+    const fromPdfIR = new Set();
+    let countCellBlack = false;
+    for (const cell of blackCellsByPage.get(pageNum) || []) {
+      if (lineY === null || lineY < cell.y - 1 || lineY > cell.y + cell.h + 1) continue;
+      cell.claimedBy.push(`${org.name} [${audience}]`);
+      const at = `${org.name} [${audience}]: black cell at p${pageNum} x=${cell.x} y=${cell.y}`;
+      const col = snapToColumn(cell.x + cell.w / 2, def.columns);
+      if (!col) {
+        failures.push(`Check D — ${at} is nearest to no column anchor`);
+        continue;
+      }
+      const slug = SLUG[col.label];
+      // Nitrofurantoin-resistant organisms have their "# tested" count cell
+      // blacked out too; it is a count, not a drug. Accepted only alongside a
+      // black nitrofurantoin cell (checked after the loop).
+      if (slug === "_n_nitrofurantoin") {
+        countCellBlack = true;
+        continue;
+      }
+      if (!slug || slug.startsWith("_")) {
+        failures.push(`Check D — ${at} falls in the "${col.label}" column, which is not a drug`);
+        continue;
+      }
+      if (fromPdf[slug] !== undefined) {
+        failures.push(`Check D — ${at} (${slug}) also carries "${fromPdf[slug]}" — a black cell should be empty`);
+        continue;
+      }
+      fromPdfIR.add(slug);
+    }
+    if (countCellBlack && !fromPdfIR.has("nitrofurantoin") && !fromPdfIR.has("nitrofurantoin-urinary")) {
+      failures.push(
+        `Check D — ${org.name} [${audience}]: p${pageNum} blacks out "# tested with nitrofurantoin" but not nitrofurantoin itself`
+      );
+    }
+    const jsonIR = new Set(bucket.intrinsicResistance || []);
+    // A Set would quietly collapse a duplicate, and the views would list the
+    // drug twice.
+    if ((bucket.intrinsicResistance || []).length !== jsonIR.size) {
+      failures.push(`Check D — ${org.name} [${audience}]: intrinsicResistance lists a drug more than once`);
+    }
+    for (const slug of fromPdfIR) {
+      irCellsChecked++;
+      if (!jsonIR.has(slug)) {
+        failures.push(
+          `Check D — ${org.name} [${audience}] ${slug}: PDF p${pageNum} marks it intrinsically resistant (black cell) but the JSON does not record it — dropped`
+        );
+      }
+      if (slug in committed) {
+        failures.push(
+          `Check D — ${org.name} [${audience}] ${slug}: PDF p${pageNum} cell is black (intrinsic resistance) but the JSON records ${committed[slug]} for it`
+        );
+      }
+    }
+    for (const slug of jsonIR) {
+      if (fromPdfIR.has(slug)) continue;
+      irCellsChecked++;
+      const pageHasColumn = def.columns.some((c) => SLUG[c.label] === slug);
+      failures.push(
+        pageHasColumn
+          ? `Check D — ${org.name} [${audience}] ${slug}: JSON records intrinsic resistance but the PDF p${pageNum} cell is not black`
+          : `Check D — ${org.name} [${audience}] ${slug}: JSON records intrinsic resistance but PDF p${pageNum} has NO COLUMN for that drug — invented`
+      );
+    }
   }
   } // end page loop
 
@@ -524,13 +650,28 @@ for (const [audience, pages] of pagesByAudience) {
     if (claimedInAudience.has(cand.org)) continue;
     const bucket = cand.org.data[audience];
     const recorded = Object.values(bucket.susceptibilities || {}).filter((v) => v !== null);
-    if (recorded.length > 0 || bucket.isolateCount != null) {
+    const recordedIR = bucket.intrinsicResistance || [];
+    if (recorded.length > 0 || recordedIR.length > 0 || bucket.isolateCount != null) {
       failures.push(
-        `Check B — ${cand.org.name} [${audience}]: JSON records ${recorded.length} value(s) (n=${bucket.isolateCount}) but no PDF row in pages ${pages
+        `Check B — ${cand.org.name} [${audience}]: JSON records ${recorded.length} value(s) and ${recordedIR.length} intrinsic resistance(s) (n=${bucket.isolateCount}) but no PDF row in pages ${pages
           .map((p) => p.pageNum)
           .join("/")} matches it`
       );
     }
+  }
+}
+
+// Every black cell on a table page must belong to exactly one PDF data row.
+// Unclaimed means the row inventory missed a row (or the PDF drew black
+// somewhere new); claimed twice means two rows' value lines run through it.
+for (const [pageNum, cells] of blackCellsByPage) {
+  for (const cell of cells) {
+    if (cell.claimedBy.length === 1) continue;
+    failures.push(
+      cell.claimedBy.length === 0
+        ? `Check D — black cell at p${pageNum} x=${cell.x} y=${cell.y} belongs to no PDF data row`
+        : `Check D — black cell at p${pageNum} x=${cell.x} y=${cell.y} is claimed by ${cell.claimedBy.length} rows: ${cell.claimedBy.join(", ")}`
+    );
   }
 }
 
@@ -546,6 +687,13 @@ if (cellsChecked < 900) {
     `Sanity — only ${cellsChecked} cells compared; expected ~1000+. Verification coverage collapsed.`
   );
 }
+// The 2026 PDF has 367. Markedly fewer means fills.json lost cells, or the
+// new PDF genuinely marks fewer — a human decides which before lowering this.
+if (irCellsChecked < 330) {
+  failures.push(
+    `Sanity — only ${irCellsChecked} intrinsic-resistance cells compared; the 2026 PDF had 367. Check fills.json and the PDF's legend.`
+  );
+}
 
 // ---------------------------------------------------------------------------
 
@@ -555,6 +703,7 @@ console.log(`Source     : ${dataPath === DEFAULT_DATA ? "src/data/antibiogram.js
 console.log(`Check A — column anchors vs PDF headers : ${anchorsChecked} anchors across ${Object.keys(PAGE_TABLES).length} pages`);
 console.log(`Check B — PDF rows <-> JSON organisms   : ${rowsMatched}/${pdfRowCount} PDF data rows matched one-to-one`);
 console.log(`Check C — cells agree in both directions: ${cellsChecked} cells`);
+console.log(`Check D — intrinsic resistance (black)  : ${irCellsChecked} cells, both directions`);
 console.log("");
 
 if (failures.length) {
@@ -565,7 +714,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("PASS — every PDF data row and cell agrees with the JSON, in both directions.");
+console.log("PASS — every PDF data row, cell and black (intrinsic-resistance) cell agrees with the JSON, in both directions.");
 console.log("");
 console.log("This does NOT verify the PDF's own numbers, does not validate the canonical");
 console.log("drug-name map (parser and verifier share it), and does not replace the hand");

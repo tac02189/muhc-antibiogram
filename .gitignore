@@ -37,6 +37,7 @@ secrets/
 # Scripts and the lockfile ARE tracked; these are regenerated intermediates.
 _extraction/node_modules
 _extraction/items.json
+_extraction/fills.json
 _extraction/raw.txt
 _extraction/layout.txt
 _extraction/tables.json

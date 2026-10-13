@@ -44,7 +44,12 @@
     "routes": [
       "IV"
     ],
-    "notes": "Avoid for HECK-Yes organisms (inducible AmpC)."
+    "notes": "Avoid for HECK-Yes organisms (inducible AmpC), even if the micro report says susceptible, unless discussed with ID.",
+    "noteAppliesTo": [
+      "citrobacter-freundii",
+      "enterobacter-cloacae",
+      "klebsiella-aerogenes"
+    ]
   },
   "cefazolin": {
     "name": "Cefazolin (urinary isolates)",
@@ -67,6 +72,12 @@
     "class": "3rd-gen cephalosporin",
     "routes": [
       "IV"
+    ],
+    "notes": "Avoid for HECK-Yes organisms (inducible AmpC), even if the micro report says susceptible, unless discussed with ID.",
+    "noteAppliesTo": [
+      "citrobacter-freundii",
+      "enterobacter-cloacae",
+      "klebsiella-aerogenes"
     ]
   },
   "ceftazidime": {
@@ -96,7 +107,10 @@
     "routes": [
       "IV"
     ],
-    "notes": "For Pseudomonas, urinary tract infections only."
+    "notes": "For Pseudomonas, urinary tract infections only.",
+    "noteAppliesTo": [
+      "pseudomonas-aeruginosa"
+    ]
   },
   "gentamicin": {
     "name": "Gentamicin",
@@ -104,7 +118,10 @@
     "routes": [
       "IV"
     ],
-    "notes": "No longer recommended for Pseudomonas per CLSI."
+    "notes": "No longer recommended for Pseudomonas per CLSI.",
+    "noteAppliesTo": [
+      "pseudomonas-aeruginosa"
+    ]
   },
   "gentamicin-synergy": {
     "name": "Gentamicin synergy",
@@ -112,7 +129,13 @@
     "routes": [
       "IV"
     ],
-    "notes": "For Enterococcus, combined with cell-wall agent."
+    "notes": "For Enterococcus, combined with cell-wall agent.",
+    "noteAppliesTo": [
+      "enterococcus-faecalis",
+      "enterococcus-faecium",
+      "enterococcus-spp-all-species",
+      "enterococcus-spp-all"
+    ]
   },
   "tobramycin": {
     "name": "Tobramycin",
@@ -153,7 +176,11 @@
       "IV",
       "PO"
     ],
-    "notes": "Adjunct only — never monotherapy."
+    "notes": "Adjunct only — never monotherapy.",
+    "noteAppliesTo": [
+      "staphylococcus-aureus-mrsa",
+      "staphylococcus-aureus-mssa"
+    ]
   },
   "linezolid": {
     "name": "Linezolid",

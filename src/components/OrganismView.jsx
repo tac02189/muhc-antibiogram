@@ -135,6 +135,8 @@ export default function OrganismView({
       )}
       {selected && selected.data?.[audience] && (
         <OrganismDetail
+          // Keyed so a newly opened organism starts with every note collapsed.
+          key={selected.id}
           organism={selected}
           audience={audience}
           audienceInfo={audienceInfo}
@@ -151,6 +153,15 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   const d = organism.data[audience];
   const gram = GRAM_LABEL[organism.gramStain] || GRAM_LABEL.unknown;
   const lowN = d.isolateCount != null && d.isolateCount < isolateMinimum;
+  // Slugs whose drug note is expanded (the note button on each row).
+  const [openNotes, setOpenNotes] = useState(() => new Set());
+  const toggleNote = (slug) =>
+    setOpenNotes((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
 
   // Sort drugs: tested first (descending %S), then null at bottom.
   //
@@ -252,10 +263,20 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                     // Judge low-n against the denominator this row's value
                     // actually came from, not the selected setting's.
                     const rowLowN = dr.n != null && dr.n < isolateMinimum;
+                    const noteOpen = openNotes.has(dr.slug);
+                    const noteId = `note-${organism.id}-${dr.slug}`;
                     return (
-                    <li key={dr.slug} className="flex items-center gap-3 py-1">
+                    <li
+                      key={dr.slug}
+                      className={[
+                        "grid items-center gap-x-3 py-1",
+                        dr.meta.notes
+                          ? "grid-cols-[auto_minmax(0,1fr)_auto]"
+                          : "grid-cols-[auto_minmax(0,1fr)]",
+                      ].join(" ")}
+                    >
                       <SusceptibilityChip value={dr.value} size="md" lowN={rowLowN} />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0">
                         <div className="text-sm font-medium text-stone-900 flex items-center gap-1.5">
                           <span className="truncate">{dr.meta.name}</span>
                           {dr.fromAll && (
@@ -284,13 +305,42 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                         </div>
                       </div>
                       {dr.meta.notes && (
-                        <span
-                          title={dr.meta.notes}
-                          className="shrink-0 text-amber-600 cursor-help"
-                          aria-label={dr.meta.notes}
+                        // A button that opens the note as visible text below
+                        // the row. This icon used to carry the note only in
+                        // `title=` and `aria-label`, neither of which a sighted
+                        // phone user sees, so on the device this tool targets
+                        // it was a caution mark with no explanation behind it.
+                        <button
+                          type="button"
+                          onClick={() => toggleNote(dr.slug)}
+                          aria-expanded={noteOpen}
+                          aria-controls={noteId}
+                          aria-label={`Note on ${dr.meta.name}`}
+                          // 44px tap target around a 28px visible circle; the
+                          // negative margins keep it from growing the row or
+                          // taking width from the drug name. The focus ring is
+                          // amber-700, not brand gold: gold is 1.8:1 against
+                          // white, under the 3:1 a focus indicator needs.
+                          className="group/note -my-3.5 -ml-2 -mr-3.5 p-2 rounded-full focus:outline-none"
                         >
-                          <AlertCircle className="w-4 h-4" />
-                        </span>
+                          <span
+                            className={[
+                              "flex items-center justify-center w-7 h-7 rounded-full transition-colors group-focus-visible/note:ring-2 group-focus-visible/note:ring-amber-700",
+                              noteOpen ? "bg-amber-100 text-amber-700" : "text-amber-600 group-hover/note:bg-amber-50",
+                            ].join(" ")}
+                          >
+                            <AlertCircle className="w-4 h-4" aria-hidden="true" />
+                          </span>
+                        </button>
+                      )}
+                      {dr.meta.notes && (
+                        <p
+                          id={noteId}
+                          hidden={!noteOpen}
+                          className="col-start-2 col-span-2 mt-1.5 text-xs leading-snug text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1.5"
+                        >
+                          {dr.meta.notes}
+                        </p>
                       )}
                     </li>
                     );

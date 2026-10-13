@@ -87,6 +87,17 @@ Both detail views now fall back. `OrganismView` adds drugs that are on the all-l
 
 Fallback never applies when the selected audience *is* `all`, and never invents a value: a drug absent from both panels stays absent. Verified against the JSON — the displayed figures and isolate counts come from the all-locations panel (e.g. ED + Penicillin (IV): GBS 100% n=58, GAS 100% n=36, *S. anginosus* 98% n=48, all matching `data.all` while `data.ed` is genuinely undefined).
 
+### Drug notes open on tap — the amber (!) icon is a button
+
+In the Organism view, the amber (!) beside a drug opens that drug's `notes` as visible text under the row. Several can be open at once, and opening another organism collapses them all. Until 2026-10-13 the icon had no tap action and no visible text; the note lived only in its `title=` tooltip and `aria-label`. That repeated the cefazolin and all-locations mistake: a sighted phone user sees neither, so the icon was a caution mark with nothing behind it. Thiago hit it on *E. faecalis* (vancomycin, nitrofurantoin, gentamicin synergy). Keep it a button. The Drug view already prints the note in its header and needs nothing.
+
+The button shows whatever the note says, and the notes have two properties worth knowing before anyone reads them as organism-specific advice:
+
+- **They are per drug, not per organism** (written in `build-app-data.mjs`, like the rest of `antibiotics.json`). A note appears on every organism with a value for that drug, including organisms it does not concern. Gentamicin's "no longer recommended for Pseudomonas" appears only on Enterobacterales, because Pseudomonas has no gentamicin value. Pip-tazo's HECK-Yes warning appears only on non-HECK organisms, because the PDF blanks pip-tazo (and ceftriaxone) for HECK-Yes ones.
+- **Their provenance is mixed** (checked against `layout.txt`, 2026-10-13). From the PDF's general notes and footnotes: oxacillin, gentamicin, amikacin, rifampin (paraphrased), caspofungin and micafungin. From its blood-culture page: minocycline and pip-tazo; the pip-tazo note drops that page's "unless discussed with ID" (flagged by peer review, 2026-10-13; the text was left unchanged because editing it is a clinical change). Written during the build, not printed anywhere in the PDF: vancomycin's "PO only for C. difficile", gentamicin synergy's "combined with cell-wall agent", nitrofurantoin's "no systemic activity", and cefazolin's note, which was derived from the column header. Some of the text is not a caution at all: `penicillin-iv`'s whole note, and the second sentence of each nitrofurantoin note, only say which PDF column the figure came from.
+
+⚠️ **Still open: notes on drugs in the collapsed "Not tested" list are `title=`-only.** That is 212 organism/setting/drug combinations (Codex peer review, 2026-10-13), and it includes the two placements those notes are actually about: *Pseudomonas* → gentamicin and the HECK-Yes organisms → pip-tazo. They were left alone because most of the 212 are notes about organisms the drug does not concern, so showing them all is a content decision, not a styling one.
+
 ### The PDF viewer — four deliberate decisions, none of them accidental
 
 `Header`/`Footer` open a full-screen in-app viewer. Every choice below was forced by a real failure; a future session "simplifying" any of them will reintroduce a shipped bug.

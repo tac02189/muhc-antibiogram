@@ -7,8 +7,9 @@
 // unmodified file must exit 0. A verifier that cannot fail is worth nothing,
 // and a passing run looks the same either way — so run this after ANY edit to
 // verify-data.mjs. Controls 1-14 are the ones CLAUDE.md has listed since
-// 2026-10-01 (until 2026-10-13 they were rebuilt by hand each time); 15-25
-// cover intrinsic resistance and the "Not tested" entries notes now hang on.
+// 2026-10-01 (until 2026-10-13 they were rebuilt by hand each time); 15-27
+// cover intrinsic resistance, the "Not tested" entries notes now hang on, and
+// the organism ids those notes point at.
 //
 // Exit status alone is not enough: node also exits 1 when the verifier
 // crashes, and a control can fail on some unrelated check while the one it
@@ -194,6 +195,24 @@ const CONTROLS = [
     'piperacillin-tazobactam: PDF p3 shows "-" (not tested) but the JSON has NO SUCH KEY',
   ],
   ["25 duplicated intrinsic resistance", (ab) => ir(ab, "enterococcus-faecalis", "all").push("clindamycin"), "intrinsicResistance lists a drug more than once"],
+  // Found by Codex's experiments, 2026-10-14: both passed before.
+  [
+    "26 invented null where the page has no column",
+    (ab) => {
+      const s = sus(ab, "pseudomonas-aeruginosa", "ed");
+      if ("minocycline" in s) throw new Error("control setup: Pseudomonas ED now has a minocycline column — pick another drug");
+      s.minocycline = null;
+    },
+    'minocycline: JSON records "not tested" (null) but PDF p4 has NO COLUMN for that drug',
+  ],
+  [
+    "27 two organisms' ids swapped",
+    (ab) => {
+      const a = org(ab, "escherichia-coli"), b = org(ab, "pseudomonas-aeruginosa");
+      [a.id, b.id] = [b.id, a.id];
+    },
+    'organism "Escherichia coli" has id "pseudomonas-aeruginosa"',
+  ],
 ];
 
 const dir = await mkdtemp(join(tmpdir(), "antibiogram-controls-"));

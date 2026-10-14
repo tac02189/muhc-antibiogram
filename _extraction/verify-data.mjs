@@ -425,6 +425,31 @@ const medianY = (toks) => {
   return ys.length ? ys[Math.floor(ys.length / 2)] : null;
 };
 
+// Organism ids are what `noteAppliesTo` in antibiotics.json points at, so an
+// id that no longer matches its name sends an organism-specific note to the
+// wrong organism. Swapping E. coli's and Pseudomonas's ids passed every other
+// check (Codex, 2026-10-14). The rule is build-app-data.mjs's slug().
+{
+  const slugOf = (name) =>
+    name
+      .toLowerCase()
+      .replace(/[()*^]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  const seen = new Set();
+  for (const o of antibiogram.organisms) {
+    if (o.id !== slugOf(o.name)) failures.push(`Check B — organism "${o.name}" has id "${o.id}"; its name gives "${slugOf(o.name)}"`);
+    if (seen.has(o.id)) failures.push(`Check B — organism id "${o.id}" is used twice`);
+    seen.add(o.id);
+  }
+  const antibiotics = JSON.parse(await readFile(join(ROOT, "src", "data", "antibiotics.json"), "utf8"));
+  for (const [slug, meta] of Object.entries(antibiotics)) {
+    for (const id of meta.noteAppliesTo || []) {
+      if (!seen.has(id)) failures.push(`Check B — antibiotics.json ${slug}.noteAppliesTo names "${id}", which no organism has`);
+    }
+  }
+}
+
 // An audience spans several pages — "all" is printed across three (gram
 // positive, gram negative, fungal). So the forward match runs per page, but the
 // claimed set and the reverse check are per AUDIENCE: asking "does this
@@ -534,11 +559,23 @@ for (const [audience, pages] of pagesByAudience) {
 
     // JSON -> PDF: a recorded value with no corresponding PDF cell was
     // invented. This is the direction the first version lacked entirely.
+    // A null counts too: it claims the PDF printed a dash. An invented null on
+    // a drug this page has no column for also blocked the all-locations
+    // fallback in the views — Codex put minocycline: null on Pseudomonas in ED
+    // and its intrinsic resistance disappeared, with the verifier passing
+    // (2026-10-14).
     for (const [slug, jsonValue] of Object.entries(committed)) {
-      if (jsonValue === null) continue;
       if (slug in fromPdf) continue;
       const pageHasColumn = def.columns.some((c) => SLUG[c.label] === slug);
       cellsChecked++;
+      if (jsonValue === null) {
+        failures.push(
+          pageHasColumn
+            ? `Check C — ${org.name} [${audience}] ${slug}: JSON records "not tested" (null) but the PDF p${pageNum} cell holds no dash`
+            : `Check C — ${org.name} [${audience}] ${slug}: JSON records "not tested" (null) but PDF p${pageNum} has NO COLUMN for that drug — invented`
+        );
+        continue;
+      }
       failures.push(
         pageHasColumn
           ? `Check C — ${org.name} [${audience}] ${slug}=${jsonValue}: JSON records a value but the PDF p${pageNum} cell is empty`
@@ -587,7 +624,20 @@ for (const [audience, pages] of pagesByAudience) {
         failures.push(`Check D — ${at} is nearest to no column anchor`);
         continue;
       }
+      // The anchor must also lie inside the box, as parse-v2 requires. A box
+      // moved off its anchor used to map to the nearest column anyway and pass
+      // (Codex, 2026-10-14).
+      if (col.x < cell.x || col.x > cell.x + cell.w) {
+        failures.push(`Check D — ${at} does not contain the anchor of its nearest column ("${col.label}", x=${col.x})`);
+        continue;
+      }
       const slug = SLUG[col.label];
+      // Empty means empty, count columns included: text over the blacked-out
+      // nitrofurantoin count cell used to pass (Codex, 2026-10-14).
+      if (slug && fromPdf[slug] !== undefined) {
+        failures.push(`Check D — ${at} (${slug}) also carries "${fromPdf[slug]}" — a black cell should be empty`);
+        continue;
+      }
       // Nitrofurantoin-resistant organisms have their "# tested" count cell
       // blacked out too; it is a count, not a drug. Accepted only alongside a
       // black nitrofurantoin cell (checked after the loop).
@@ -597,10 +647,6 @@ for (const [audience, pages] of pagesByAudience) {
       }
       if (!slug || slug.startsWith("_")) {
         failures.push(`Check D — ${at} falls in the "${col.label}" column, which is not a drug`);
-        continue;
-      }
-      if (fromPdf[slug] !== undefined) {
-        failures.push(`Check D — ${at} (${slug}) also carries "${fromPdf[slug]}" — a black cell should be empty`);
         continue;
       }
       fromPdfIR.add(slug);

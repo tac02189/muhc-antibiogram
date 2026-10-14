@@ -502,6 +502,11 @@ for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
         continue;
       }
       const slug = SLUG[inside[0].label] || inside[0].label.toLowerCase();
+      // A black cell is empty — in every column, the count columns included.
+      if (cells[inside[0].label] !== undefined) {
+        anomalies.push(`${where} also carries text "${cells[inside[0].label]}" in the "${inside[0].label}" column`);
+        continue;
+      }
       // An organism intrinsically resistant to nitrofurantoin (Proteus,
       // Serratia) has its "# tested with nitrofurantoin" cell blacked out
       // too. That column is a count, not a drug — checked below.
@@ -511,10 +516,6 @@ for (const [pageNumStr, def] of Object.entries(PAGE_TABLES)) {
       }
       if (slug.startsWith("_")) {
         anomalies.push(`${where} lands on the "${inside[0].label}" column, which is not a drug`);
-        continue;
-      }
-      if (slug in susceptibilities) {
-        anomalies.push(`${where} also carries text for ${slug}`);
         continue;
       }
       intrinsicResistance.add(slug);

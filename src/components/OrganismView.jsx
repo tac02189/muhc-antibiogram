@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { ChevronRight, ArrowLeft, AlertCircle, Beaker } from "lucide-react";
-import SusceptibilityChip, { bandFor } from "./SusceptibilityChip.jsx";
+import SusceptibilityChip, { bandFor, isolatesFor, NITROFURANTOIN } from "./SusceptibilityChip.jsx";
 import useDetailScroll from "../hooks/useDetailScroll.js";
 
 const GRAM_LABEL = {
@@ -310,7 +310,8 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   // fallback penicillin-IV of 100% — an all-locations figure over n=36 — under
   // a header reading "n = 11" and "below CLSI threshold". Four rows differed
   // that way, and the low-n judgement was being made against the wrong
-  // denominator in every one.
+  // denominator in every one. Nitrofurantoin rows go one step further and
+  // carry their OWN column's count, not the organism's total (isolatesFor).
   //
   // An intrinsically resistant drug has no key in `susceptibilities` either
   // (see `resistant` below), so "no key" alone cannot mean "off this panel":
@@ -324,11 +325,11 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
       slug,
       value,
       fromAll: false,
-      n: d.isolateCount,
+      n: isolatesFor(d, slug),
     }));
     for (const [slug, value] of Object.entries(allPanel)) {
       if (own[slug] === undefined && !ownIR.has(slug) && value != null) {
-        rows.push({ slug, value, fromAll: true, n: allBucket?.isolateCount });
+        rows.push({ slug, value, fromAll: true, n: isolatesFor(allBucket, slug) });
       }
     }
     return rows
@@ -425,6 +426,9 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                     // Judge low-n against the denominator this row's value
                     // actually came from, not the selected setting's.
                     const rowLowN = dr.n != null && dr.n < isolateMinimum;
+                    // Nitrofurantoin's n is its own tested count, not the
+                    // header's total, so the row prints it.
+                    const nitro = NITROFURANTOIN.has(dr.slug);
                     const note = noteFor(dr.meta, organism.id, true);
                     const noteOpen = openNotes.has(dr.slug);
                     const noteId = `note-${organism.id}-${dr.slug}`;
@@ -454,9 +458,10 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                             <span className="text-stone-600">
                               {" · not specific to "}
                               {audienceInfo.short}
-                              {dr.n != null && ` · n = ${dr.n} all locations`}
+                              {(dr.n != null || nitro) && ` · n = ${dr.n ?? "?"}${nitro ? " tested," : ""} all locations`}
                             </span>
                           )}
+                          {!dr.fromAll && nitro && ` · n = ${dr.n ?? "?"} tested`}
                           {rowLowN && (
                             <span className="text-amber-700">
                               {" · low n"}

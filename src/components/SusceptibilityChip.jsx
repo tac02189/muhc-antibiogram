@@ -9,6 +9,21 @@ export function bandFor(value) {
   return "poor";
 }
 
+// The isolate count behind a % figure — what `n` and the low-n flag are judged
+// against. Nitrofurantoin is tested on far fewer isolates than the organism's
+// total, and the PDF prints that count beside it ("# Isolates tested with
+// nitrofurantoin" → `nitrofurantoinTested`). Until 2026-10-14 every view used
+// the total, so MRSA's 100% (All) read as n = 335 when 22 were tested, and 14
+// of the 37 nitrofurantoin figures were under the CLSI 30 with no low-n flag
+// (Gemini peer review). A nitrofurantoin figure with no count of its own gets
+// null ("?"), never the total.
+export const NITROFURANTOIN = new Set(["nitrofurantoin", "nitrofurantoin-urinary"]);
+export function isolatesFor(bucket, slug) {
+  if (!bucket) return null;
+  if (NITROFURANTOIN.has(slug)) return bucket.nitrofurantoinTested ?? null;
+  return bucket.isolateCount ?? null;
+}
+
 const SIZES = {
   sm: "px-1.5 py-0.5 text-[11px] min-w-[2.5rem]",
   md: "px-2 py-0.5 text-xs min-w-[2.75rem]",

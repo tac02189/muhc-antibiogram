@@ -50,7 +50,9 @@ function acrossAudiences(org, slug) {
     const v = d.susceptibilities?.[slug];
     if (v === undefined) return `${a} ·`; // drug not on this panel
     if (v === null) return `${a} —`; // on panel, no value recorded
-    const low = d.isolateCount != null && d.isolateCount < MIN_N ? "!" : "";
+    // Nitrofurantoin is judged on its own tested count, as in the app.
+    const n = /^nitrofurantoin(-urinary)?$/.test(slug) ? d.nitrofurantoinTested : d.isolateCount;
+    const low = n != null && n < MIN_N ? "!" : "";
     return `${a} ${v}%${low}`;
   }).join("  ");
 }

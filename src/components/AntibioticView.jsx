@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ChevronRight, ArrowLeft, AlertCircle, Pill } from "lucide-react";
-import SusceptibilityChip, { bandFor } from "./SusceptibilityChip.jsx";
+import SusceptibilityChip, { bandFor, isolatesFor, NITROFURANTOIN } from "./SusceptibilityChip.jsx";
 import useDetailScroll from "../hooks/useDetailScroll.js";
 
 const GRAM_LABEL = {
@@ -106,7 +106,8 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
       const d = o.data[audience];
       if (!d) continue;
       let v = d.susceptibilities?.[slug];
-      let n = d.isolateCount;
+      // Nitrofurantoin's own tested count, not the organism's total.
+      let n = isolatesFor(d, slug);
       let fromAll = false;
       if (v === undefined) {
         if ((d.intrinsicResistance || []).includes(slug)) {
@@ -127,7 +128,7 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
         const allV = allData?.susceptibilities?.[slug];
         if (allV === undefined || allV === null) continue;
         v = allV;
-        n = allData.isolateCount;
+        n = isolatesFor(allData, slug);
         fromAll = true;
       }
       out.push({
@@ -216,8 +217,14 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                           <span className={`text-[10px] font-bold px-1 py-px rounded shrink-0 ${gram.className}`}>
                             {gram.label}
                           </span>
-                          <span>n = {r.n ?? "?"}</span>
-                          {lowN && <span className="text-amber-600">low n</span>}
+                          <span>
+                            n = {r.n ?? "?"}
+                            {NITROFURANTOIN.has(slug) && " tested"}
+                          </span>
+                          {/* amber-700, as in the Organism view: amber-600 is
+                              3.2:1 on white, under the 4.5:1 small text needs
+                              (Codex, 2026-10-14). */}
+                          {lowN && <span className="text-amber-700">low n</span>}
                           {r.fromAll && (
                             // Visible text, not a tooltip: this figure comes
                             // from the all-locations panel, not the setting.

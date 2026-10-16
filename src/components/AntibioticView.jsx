@@ -261,6 +261,20 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
                 </div>
                 <p className="mt-0.5 mb-2 text-[11px] text-stone-500">
                   Marked as intrinsic resistance (a black cell) in the source PDF.
+                  {/* As in the Organism view. It says where the row comes
+                      from, never that this setting's table lacks the black
+                      cell: MRSA → Penicillin (IV) is a fallback row here, yet
+                      the ED/ICU/Peds tables mark MRSA black under plain
+                      "Penicillin" (Gemini peer review, 2026-10-16). */}
+                  {resistant.some((r) => r.fromAll) && (
+                    <>
+                      {" "}Rows marked{" "}
+                      <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+                        all locations
+                      </span>{" "}
+                      are from the all-locations table, not specific to {audienceInfo.short}.
+                    </>
+                  )}
                 </p>
                 <ul className="space-y-1 text-xs text-stone-800">
                   {resistant.map((r) => (

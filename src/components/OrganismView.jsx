@@ -91,7 +91,7 @@ function NoteText({ id, open, className, children }) {
 // not the selected setting (CLAUDE.md, "All-locations fallback").
 function AllLocationsBadge() {
   return (
-    <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
+    <span className="shrink-0 whitespace-nowrap text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">
       all locations
     </span>
   );
@@ -217,8 +217,10 @@ export default function OrganismView({
                     <div className="font-medium text-stone-900 truncate italic">{o.name}</div>
                     <div className="text-xs text-stone-500 flex items-center gap-2 mt-0.5">
                       <span>n = {d.isolateCount ?? "?"}</span>
+                      {/* amber-700, as on the detail rows: amber-600 is 3.2:1
+                          on white, under the 4.5:1 small text needs. */}
                       {lowN && (
-                        <span className="text-amber-600 inline-flex items-center gap-0.5">
+                        <span className="text-amber-700 inline-flex items-center gap-0.5">
                           <AlertCircle className="w-3 h-3" /> low n
                         </span>
                       )}
@@ -507,6 +509,17 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
                 </div>
                 <p className="mt-0.5 mb-2 text-[11px] text-stone-500">
                   Marked as intrinsic resistance (a black cell) in the source PDF.
+                  {/* The badge was the only sign that a row comes from the
+                      all-locations table (a bedside-transparency question from
+                      the Gemini review of 2026-10-15), so the caption says it
+                      too, in the words the % rows use. AntibioticView has the
+                      reason it says nothing about the setting's own table. */}
+                  {resistant.some((r) => r.fromAll) && (
+                    <>
+                      {" "}Rows marked <AllLocationsBadge /> are from the all-locations
+                      table, not specific to {audienceInfo.short}.
+                    </>
+                  )}
                 </p>
                 <DrugNameList
                   entries={resistant}

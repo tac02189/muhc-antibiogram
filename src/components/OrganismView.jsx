@@ -350,6 +350,13 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   // Peds) — unless the setting already marks the same drug under its other
   // column heading: MRSA in ED lists "Penicillin" itself, and adding
   // "Penicillin (IV) · all locations" beside it said the same thing twice.
+  //
+  // Unlike a % figure, it also fills in where the setting prints a DASH
+  // (Thiago, 2026-10-15): intrinsic resistance belongs to the organism, so a
+  // setting that left the cell blank has not contradicted the all-locations
+  // page — E. cloacae's cefoxitin is black on the All page and a dash in ED,
+  // and "Not tested" there undersold it. A figure the setting does print
+  // still wins (E. cloacae ICU cefoxitin 0%).
   const resistant = useMemo(() => {
     const own = d.susceptibilities || {};
     const ownIR = d.intrinsicResistance || [];
@@ -357,7 +364,7 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
     if (audience !== "all") {
       for (const slug of organism.data?.all?.intrinsicResistance || []) {
         const sibling = SIBLING_COLUMN[slug];
-        if (own[slug] === undefined && !ownIR.includes(slug) && !(sibling && ownIR.includes(sibling))) {
+        if (own[slug] == null && !ownIR.includes(slug) && !(sibling && ownIR.includes(sibling))) {
           rows.push({ slug, fromAll: true });
         }
       }
@@ -369,8 +376,11 @@ function OrganismDetail({ organism, audience, audienceInfo, antibiotics, isolate
   }, [d, antibiotics, audience, organism]);
 
   const tested = drugs.filter((dr) => dr.value != null);
+  // A dash that the all-locations page fills in as intrinsic resistance is
+  // listed there, not also under "Not tested".
+  const resistantSlugs = new Set(resistant.map((r) => r.slug));
   const untested = drugs
-    .filter((dr) => dr.value == null)
+    .filter((dr) => dr.value == null && !resistantSlugs.has(dr.slug))
     .map((dr) => ({ ...dr, note: noteFor(dr.meta, organism.id, false) }));
   const untestedNotes = untested.filter((dr) => dr.note).length;
   // Whether any displayed value came from a bucket other than the selected

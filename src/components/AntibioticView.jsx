@@ -109,6 +109,13 @@ function AntibioticDetail({ slug, meta, organisms, audience, audienceInfo, isola
       // Nitrofurantoin's own tested count, not the organism's total.
       let n = isolatesFor(d, slug);
       let fromAll = false;
+      // A dash here that the all-locations page marks as intrinsic resistance
+      // is shown as intrinsic resistance (Thiago, 2026-10-15 — see the
+      // Organism view's `resistant`). A printed figure still wins.
+      if (v === null && audience !== "all" && (o.data?.all?.intrinsicResistance || []).includes(slug)) {
+        ir.push({ id: o.id, name: o.name, fromAll: true });
+        continue;
+      }
       if (v === undefined) {
         if ((d.intrinsicResistance || []).includes(slug)) {
           ir.push({ id: o.id, name: o.name, fromAll: false });

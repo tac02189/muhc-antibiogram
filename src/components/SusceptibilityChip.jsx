@@ -46,7 +46,10 @@ export default function SusceptibilityChip({ value, lowN = false, size = "md", c
         "inline-flex items-center justify-center font-mono font-semibold tabular-nums rounded ring-1 ring-inset",
         SIZES[size] || SIZES.md,
         BAND_STYLES[band],
-        lowN ? "italic opacity-80" : "",
+        // Italic, never faded: the 80% opacity this used to add cut the
+        // chip's contrast to 2.2-3.2:1 (Codex, 2026-10-14), and the row
+        // already says "low n" in words (Thiago, 2026-10-15).
+        lowN ? "italic" : "",
         className,
       ].join(" ")}
       title={value == null ? "Not tested or not indicated" : `${value}% susceptible`}

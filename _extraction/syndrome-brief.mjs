@@ -2,8 +2,8 @@
 //
 // WHY THIS EXISTS: syndromes.json is the one part of this app that is NOT
 // derived from the PDF — it was scaffolded from the local antibiogram plus
-// standard IDSA guidance and has never been clinically reviewed (see CLAUDE.md,
-// "The Empiric tab is unreviewed draft content"). Reviewing it cold means
+// standard IDSA guidance, so a human has to confirm it (the MU pharmacy team did
+// on 2026-11-24; see CLAUDE.md, "The Empiric tab"). Reviewing it cold means
 // cross-referencing four audiences of susceptibility data by hand for every
 // drug in every card. This lays that data next to each card so the review is a
 // confirm-or-override pass instead of a research project.
@@ -95,7 +95,7 @@ const bullet = (s) => (MD ? `- ${s}` : `  ${s}`);
 
 console.log(
   MD
-    ? "# Syndrome review brief — local susceptibility\n\n> Generated from `src/data/`. Recommends nothing; the Empiric cards are unreviewed drafts.\n>\n> Legend: `!` = fewer than " +
+    ? "# Syndrome review brief — local susceptibility\n\n> Generated from `src/data/`. Recommends nothing. The cards' review record is in `CLAUDE.md` → *The Empiric tab*.\n>\n> Legend: `!` = fewer than " +
         MIN_N +
         " isolates (below CLSI threshold, interpret with caution) · `·` = drug not on that panel · `—` = on panel, no value recorded · `n/a` = organism not reported in that setting.\n>\n> `CHECK` lines are a **pooled** heuristic: a quoted percentage is compared against every value for that drug across all of the card's organisms and settings at once. Its silence means nothing was 5 points away somewhere — **not** that the claim was validated."
     : `Syndrome review brief — local susceptibility\n` +
@@ -224,6 +224,6 @@ for (const syn of list) {
 
 console.log(
   MD
-    ? "\n---\n\n**To review:** for each card, confirm or override the draft agents against the data above. Edits go in `_extraction/build-app-data.mjs` (which generates `syndromes.json`), not the JSON. The draft banner in `SyndromeView.jsx` stays until you say the cards are reviewed."
-    : `\n${"=".repeat(74)}\nTo review: confirm or override each draft agent against the data above.\nEdits go in _extraction/build-app-data.mjs, which GENERATES syndromes.json.\nThe draft banner stays until you say the cards are reviewed.`
+    ? "\n---\n\n**To review:** for each card, confirm or override the agents against the data above. Edits go in `_extraction/build-app-data.mjs` (which generates `syndromes.json`), not the JSON, and each one is logged in `docs/empiric-amendments.json`."
+    : `\n${"=".repeat(74)}\nTo review: confirm or override each agent against the data above.\nEdits go in _extraction/build-app-data.mjs, which GENERATES syndromes.json;\nlog each one in docs/empiric-amendments.json.`
 );

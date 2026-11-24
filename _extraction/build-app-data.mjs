@@ -285,8 +285,9 @@ console.log(`Wrote antibiogram.json — ${organisms.length} organisms`);
 await writeFile(join(OUT_DIR, "antibiotics.json"), JSON.stringify(antibiotics, null, 2), "utf8");
 console.log(`Wrote antibiotics.json — ${Object.keys(antibiotics).length} drugs`);
 
-// --- Syndromes: scaffold with placeholder empiric choices grounded in the local antibiogram + IDSA guidance.
-// Thiago will review and edit each card before v1.0 launch.
+// --- Syndromes: empiric choices scaffolded from the local antibiogram + IDSA guidance. Editing a card
+// is a clinical change: CLAUDE.md → "The Empiric tab" says who confirmed the cards, and any change is
+// logged in docs/empiric-amendments.json.
 const syndromes = [
   {
     id: "uti-uncomplicated",
@@ -408,7 +409,7 @@ const syndromes = [
 ];
 
 await writeFile(join(OUT_DIR, "syndromes.json"), JSON.stringify(syndromes, null, 2), "utf8");
-console.log(`Wrote syndromes.json — ${syndromes.length} syndromes (placeholders pending clinical review)`);
+console.log(`Wrote syndromes.json — ${syndromes.length} syndromes`);
 
 // --- Supplementary: ESBL/CRE rates, Shorter is Better durations, blood-culture rapid Dx, beta-lactam cross-reactivity ---
 // These are transcribed from layout.txt pages 8-13. Manually structured for app use.

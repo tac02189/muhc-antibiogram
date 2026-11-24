@@ -17,15 +17,6 @@ export default function SyndromeView({ syndromes, antibiotics, organisms, audien
 
   return (
     <div>
-      <div className="mb-4 px-3 py-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-2 text-xs text-amber-900">
-        <AlertCircle className="w-4 h-4 shrink-0 mt-px text-amber-700" />
-        <p>
-          <strong>Draft recommendations — pending clinical review.</strong> Empiric choices below are
-          scaffolded from the local antibiogram + IDSA guidance. Confirm with current departmental
-          protocols and ID before clinical use.
-        </p>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2">
         {filtered.map((s) => (
           <SyndromeCard

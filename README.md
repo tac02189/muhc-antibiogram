@@ -16,20 +16,20 @@ Four views over the same dataset, filtered by one of four patient populations (*
 |---|---|
 | **Organism** | 32 organisms → % susceptible per antibiotic |
 | **Drug** | Inverted: one antibiotic → how it performs across organisms |
-| **Empiric** | 6 syndrome cards — ⚠️ **unreviewed draft, see below** |
+| **Empiric** | 6 syndrome cards — confirmed by the MU pharmacy team, see below |
 | **Reference** | ESBL/CRE rates, duration guidance, blood-culture rapid diagnostics, β-lactam cross-reactivity |
 
 The original PDF is readable in-app and offline.
 
-**Colour is medical convention, not decoration:** green ≥80% · yellow 41–79% · red ≤40% · grey dash = not tested. Organisms with fewer than 30 isolates are flagged `low n` per the CLSI threshold.
+**Color is medical convention, not decoration:** green ≥80% · yellow 41–79% · red ≤40% · gray dash = not tested. Organisms with fewer than 30 isolates are flagged `low n` per the CLSI threshold.
 
 ---
 
-## ⚠️ The Empiric tab is unreviewed
+## ⚠️ The Empiric tab: confirmed by the MU pharmacy team
 
-The 6 syndrome cards were scaffolded from the local antibiogram plus standard IDSA guidance. **They are not reviewed clinical recommendations**, and the app says so in a banner on that tab. Everything else in the app derives mechanically from the source PDF.
+The 6 syndrome cards were scaffolded from the local antibiogram plus standard IDSA guidance. **The MU pharmacy team confirmed all six** (recorded 2026-11-24 in `docs/empiric-pharmacy-confirmation-2026-11-24.json`), and the draft banner came off the tab in v1.10. Everything else in the app derives mechanically from the source PDF.
 
-Do not edit those cards, or remove that banner, without a clinician's sign-off. See `CLAUDE.md`.
+Changing an agent, dose or rationale on those cards is a clinical change: do not make one without a clinician's or the pharmacy team's sign-off. See `CLAUDE.md`.
 
 ---
 
@@ -42,7 +42,7 @@ npm run dev
 
 ⚠️ The dev server serves at **`http://localhost:5173/muhc-antibiogram/`**, not the root — `base` defaults to the old GitHub Pages subpath. Plain `/` is a blank page and looks like a broken build.
 
-The service worker is disabled in dev. To exercise offline behaviour you need a production build:
+The service worker is disabled in dev. To exercise offline behavior you need a production build:
 
 ```bash
 npm run preview:firebase    # builds nothing — run build:firebase first

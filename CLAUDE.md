@@ -8,12 +8,12 @@ An interactive React + Vite SPA replacing the static **MUHC University Hospital 
 
 This is a **reference tool, not bedside decision support** — it reports measured local susceptibility percentages, which are facts from the source PDF rather than recommendations. That makes its clinical risk lower than Pocket Resus's. **The one exception is the Empiric tab, which is the opposite** — see immediately below.
 
-## ⚠️ The Empiric tab is unreviewed draft content
+## ⚠️ The Empiric tab: confirmed by the MU pharmacy team, banner still up
 
-`src/data/syndromes.json` holds 6 syndrome cards (uncomplicated UTI, complicated UTI/pyelo, CAP, HAP/VAP, SSTI, intra-abdominal). They were **scaffolded from the local antibiogram plus standard IDSA guidance — they are not Thiago's clinical recommendations, and no clinician has reviewed them.**
+`src/data/syndromes.json` holds 6 syndrome cards (uncomplicated UTI, complicated UTI/pyelo, CAP, HAP/VAP, SSTI, intra-abdominal). They were **scaffolded from the local antibiogram plus standard IDSA guidance — they are not Thiago's own clinical recommendations.**
 
-- **No clinician has reviewed the cards.** The only change since the initial commit `60e304b` is the 2026-10-03 slug rename (`nitrofurantoin` → `nitrofurantoin-urinary`, see *Qualified drug columns*); no agent, dose or rationale has changed. Treat the review as not having happened until Thiago records a sign-off date here.
-- `SyndromeView.jsx` renders a visible **"Draft recommendations — pending clinical review"** banner. **Do not remove that banner** until Thiago says the cards are reviewed.
+- **Confirmed by the MU pharmacy team, recorded 2026-11-24 at Thiago's word. He did not review them himself.** His words: "this has all been confirmed by our MU pharmacy team, no need for me to review as well." It covers all six cards as they stand at `syndromes.json` sha256 `21a92b2d…`, with no change asked for. The only change since the initial commit `60e304b` is the 2026-10-03 slug rename (`nitrofurantoin` → `nitrofurantoin-urinary`, see *Qualified drug columns*); no agent, dose or rationale has changed. The record is on the private review page, artifact `daa98330-7c36-4e5d-9422-75d5b9ecab1b` (built by `[3] Claude/_clinical-source-check-2026-11-23/build-empiric-review.cjs`): all 45 lines marked Correct with a note naming the pharmacy team, and `signoff/all` with `confirmedBy: "MU pharmacy team"`. Claude wrote those marks at his word. Any later change to an agent, dose or rationale is unreviewed until he or the pharmacy team confirms it.
+- `SyndromeView.jsx` still renders the visible **"Draft recommendations — pending clinical review"** banner. **Do not remove it** until Thiago says to: the review is recorded, but as of 2026-11-24 he has not asked for the banner to come off.
 - Editing them is a *clinical* change: schema is stable, so it is only the `firstLine` / `alternatives` / `avoid` arrays — but a wrong empiric regimen here reaches a prescriber. Never edit them on your own initiative, and never let a passing Codex/Gemini review stand in for clinical verification (root `CLAUDE.md`, *Clinical content*).
 
 Everything else in the app derives mechanically from the source PDF. This file is the exception that needs a human.
@@ -41,7 +41,7 @@ Two things it does that are worth keeping: it flags `!` on any organism below th
 |---|---|
 | `src/data/antibiogram.json` | 32 organisms × 4 audiences × susceptibilities and `intrinsicResistance`, plus `audiences` and `legend` |
 | `src/data/antibiotics.json` | Drug metadata (class, routes, notes, `noteAppliesTo`) |
-| `src/data/syndromes.json` | 6 empiric syndrome cards — **draft, see above** |
+| `src/data/syndromes.json` | 6 empiric syndrome cards — **confirmed by the MU pharmacy team (2026-11-24), banner still up; see above** |
 | `src/data/supplementary.json` | ESBL/CRE rates, durations, blood-culture rapid diagnostics, β-lactam cross-reactivity |
 
 Four tabs (Organism · Drug · Empiric · Reference) and four audience filters (All · ED · ICU · Peds). The audience filter picks which sub-object of each organism's `data` the views read — it is not a display filter.

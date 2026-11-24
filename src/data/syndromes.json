@@ -20,7 +20,7 @@
       {
         "drug": "cefazolin",
         "dose": "Cephalexin 500 mg PO QID × 5–7 d",
-        "rationale": "Cephalexin reasonable second-line, especially for ESBL concerns are low."
+        "rationale": "Cephalexin reasonable second-line, especially when ESBL concerns are low."
       }
     ],
     "avoid": [

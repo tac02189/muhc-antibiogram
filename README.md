@@ -27,7 +27,7 @@ The original PDF is readable in-app and offline.
 
 ## ⚠️ The Empiric tab: confirmed by the MU pharmacy team
 
-The 6 syndrome cards were scaffolded from the local antibiogram plus standard IDSA guidance. **The MU pharmacy team confirmed all six** (recorded 2026-11-24 in `docs/empiric-pharmacy-confirmation-2026-11-24.json`), and the draft banner came off the tab in v1.10. Everything else in the app derives mechanically from the source PDF.
+The 6 syndrome cards were scaffolded from the local antibiogram plus standard IDSA guidance. **The MU pharmacy team confirmed all six** (recorded 2026-11-24 in `docs/empiric-pharmacy-confirmation-2026-11-24.json`), and the draft banner came off the tab in v1.10. In v1.11 one rationale was reworded at Thiago's word (`docs/empiric-amendments.json`). Everything else in the app derives mechanically from the source PDF.
 
 Changing an agent, dose or rationale on those cards is a clinical change: do not make one without a clinician's or the pharmacy team's sign-off. See `CLAUDE.md`.
 

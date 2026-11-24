@@ -298,7 +298,7 @@ const syndromes = [
       { drug: "tmp-smx", dose: "1 DS PO BID × 3 d", rationale: "Local E. coli susceptibility ~75%. Avoid if local resistance > 20% or recent TMP-SMX use." },
     ],
     alternatives: [
-      { drug: "cefazolin", dose: "Cephalexin 500 mg PO QID × 5–7 d", rationale: "Cephalexin reasonable second-line, especially for ESBL concerns are low." },
+      { drug: "cefazolin", dose: "Cephalexin 500 mg PO QID × 5–7 d", rationale: "Cephalexin reasonable second-line, especially when ESBL concerns are low." },
     ],
     avoid: [
       { drug: "ciprofloxacin", reason: "Reserve fluoroquinolones — local E. coli FQ susceptibility ~70–75%; ADRs (tendon, QT, neurologic)." },
